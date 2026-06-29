@@ -1,0 +1,70 @@
+@using System.Security.Claims
+@model CaNhanVM
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    string? quyen = User.FindFirst(ClaimTypes.Role)?.Value;
+}
+
+<div class="p-3">
+    <h2 class="text-lg font-medium mb-3">@ViewData["Title"]</h2>
+
+    <form method="post" asp-action="CaNhan" asp-controller="TaiKhoan" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <input type="hidden" asp-for="Ten">
+        <label>
+            @(quyen == "CBGV" ? "Họ tên" : "Tên đơn vị")
+            <input type="text" disabled asp-for="Ten" class="input w-full mt-1">
+            <span asp-validation-for="Ten" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Tên đăng nhập
+            <input type="text" asp-for="TenDangNhap" class="input w-full mt-1" placeholder="Nhập tên đăng nhập">
+            <span asp-validation-for="TenDangNhap" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Email
+            <input type="email" asp-for="Email" class="input w-full mt-1" placeholder="Nhập email">
+            <span asp-validation-for="Email" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Số điện thoại
+            <input type="text" asp-for="SoDienThoai" class="input w-full mt-1" placeholder="Nhập số điện thoại">
+            <span asp-validation-for="SoDienThoai" class="text-error text-sm"></span>
+        </label>
+        <div class="flex gap-3 justify-between items-center flex-wrap">
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <div class="flex gap-3 ml-auto flex-wrap">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </div>
+    </form>
+</div>             
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

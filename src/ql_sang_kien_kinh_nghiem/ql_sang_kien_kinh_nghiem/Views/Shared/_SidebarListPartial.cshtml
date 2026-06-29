@@ -1,0 +1,50 @@
+@model string
+
+<ul>
+    @if(Model == "BGD" || Model == "DVTT") {
+        <li>
+            <a href="/" class="block px-3 py-2 hover:bg-base-300 transition">Thống kê</a>
+        </li>
+    }
+    <li>
+        <a asp-action="Index" asp-controller="SangKien" class="block px-3 py-2 hover:bg-base-300 transition">Sáng kiến</a>
+    </li>
+    @if(Model == "BGD") {
+        <li>
+            <a asp-action="Index" asp-controller="HoiDong" class="block px-3 py-2 hover:bg-base-300 transition">Hội đồng</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="VaiTro" class="block px-3 py-2 hover:bg-base-300 transition">Vai trò</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="ChuDauTu" class="block px-3 py-2 hover:bg-base-300 transition">Chủ đầu tư</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="CanBoGiangVien" class="block px-3 py-2 hover:bg-base-300 transition">Cán bộ, giảng viên</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="Nganh" class="block px-3 py-2 hover:bg-base-300 transition">Ngành</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="MonHoc" class="block px-3 py-2 hover:bg-base-300 transition">Môn học</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="TrinhDo" class="block px-3 py-2 hover:bg-base-300 transition">Trình độ</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="ChucVu" class="block px-3 py-2 hover:bg-base-300 transition">Chức vụ</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="DonVi" class="block px-3 py-2 hover:bg-base-300 transition">Đơn vị</a>
+        </li>
+        <li>
+            <a asp-action="Index" asp-controller="LinhVuc" class="block px-3 py-2 hover:bg-base-300 transition">Lĩnh vực</a>
+        </li>
+    }
+
+    @if(Model == "ADMIN") {
+        <li>
+            <a asp-action="Index" asp-controller="TaiKhoan" class="block px-3 py-2 hover:bg-base-300 transition">Tài khoản</a>
+        </li>
+    }
+</ul>  

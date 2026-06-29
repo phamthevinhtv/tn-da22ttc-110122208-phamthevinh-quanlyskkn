@@ -1,0 +1,35 @@
+@model DangNhapVM
+
+@{
+    Layout = "_BlankLayout";
+}
+
+<div class="h-screen flex justify-center items-center p-3">
+    <div class="card shadow-md border border-base-300 p-6 w-100">
+        <div class="flex items-center justify-center gap-3 pb-3 border-b border-base-300">
+            <img src="~/images/logo.png" alt="Logo" class="w-10">
+            <p class="text-lg font-medium italic text-primary">Sáng kiến kinh nghiệm</p>
+        </div>
+        <h1 class="text-lg font-medium text-center my-3">Đăng nhập</h1>
+        <form method="post" asp-action="DangNhap" asp-controller="TaiKhoan" asp class="flex flex-col gap-3">
+        <label>
+            Tên đăng nhập
+            <input type="text" asp-for="TenDangNhap" class="input w-full mt-1" placeholder="Nhập tên đăng nhập">
+            <span asp-validation-for="TenDangNhap" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Mật khẩu
+            <input type="password" asp-for="MatKhau" class="input w-full mt-1" placeholder="Nhập mật khẩu">
+            <span asp-validation-for="MatKhau" class="text-error text-sm"></span>
+        </label>
+        <a asp-action="DatLaiMatKhau" asp-controller="TaiKhoan" class="text-sm text-primary text-right">Quên mật khẩu?</a>
+        <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+        <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Đăng nhập</button>
+    </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

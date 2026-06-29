@@ -1,0 +1,104 @@
+@model TaiKhoanVM
+
+@{
+    ViewData["Title"] = (Model.MaTK > 0 ? "Chi tiết " : "Thêm ") + "tài khoản";
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
+        @if(Model.MaTK > 0) {
+            <a asp-action="ChiTiet" asp-controller="TaiKhoan" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm tài khoản</a>
+        }
+    </div>
+
+    <form method="post" asp-action="ChiTiet" asp-controller="TaiKhoan" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <input type="hidden" asp-for="MaTK">
+        <label>
+            @if(Model.MaTK > 0) {
+                <p>Họ tên</p>
+                <input disabled asp-for="HoTen" class="input w-full mt-1"/>
+                <input type="hidden" asp-for="MaCBGV" />
+                <input type="hidden" asp-for="HoTen"/>
+            } else {
+                <p>Cán bộ/giảng viên</p>
+                <select asp-for="MaCBGV" asp-items="Model.DSCanBoGiangVien" class="select w-full mt-1">
+                    <option disabled selected>Chọn cán bộ/giảng viên</option>
+                </select>
+                <span asp-validation-for="MaCBGV" class="text-error text-sm"></span>
+            }
+        </label>
+        @if(Model.MaTK > 0) {
+            <label>
+                Tên đăng nhập
+                <input type="text" asp-for="TenDangNhap" class="input w-full mt-1" placeholder="Nhập tên đăng nhập">
+                <span asp-validation-for="TenDangNhap" class="text-error text-sm"></span>
+            </label>
+        }
+        <label>
+            Quyền đăng nhập
+            <select asp-for="Quyen" asp-items="Model.DSQuyen" class="select w-full mt-1">
+                <option disabled selected>Chọn quyền đăng nhập</option>
+            </select>
+            <span asp-validation-for="Quyen" class="text-error text-sm"></span>
+        </label>
+        <div class="flex gap-3 justify-between items-center flex-wrap">
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <div class="flex gap-3 ml-auto flex-wrap">
+                <a asp-action="Index" asp-controller="TaiKhoan" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                @if(Model.MaTK > 0) {
+                    <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('khoa_mo_tai_khoan_modal_@Model.MaTK').showModal()">
+                        @(Model.TrangThaiTK == 1 ? "Khóa" : "Mở khóa")
+                    </button>
+                }
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<dialog id="khoa_mo_tai_khoan_modal_@Model.MaTK" class="modal">
+    <div class="modal-box p-3">
+        <h3 class="text-lg">
+            Xác nhận
+        </h3>
+        <p class="text-base mb-3 mt-2">
+            Bạn có chắc chắn muốn @(Model.TrangThaiTK == 1 ? "khóa" : "mở khóa") tài khoản "@Model.TenDangNhap" không?
+        </p>
+        <form method="post" asp-action="KhoaMo" asp-controller="TaiKhoan" class="flex flex-col gap-3">
+            <input type="hidden" name="ma" value="@Model.MaTK">
+            <div class="modal-action mt-0 gap-3 ml-auto">
+                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('khoa_mo_tai_khoan_modal_@Model.MaTK').close()">Thoát</button>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">@(Model.TrangThaiTK == 1 ? "Khóa" : "Mở khóa")</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

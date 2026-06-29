@@ -1,0 +1,268 @@
+@using System.Text.Json
+@model ThongKeVM
+
+@{
+    ViewData["Title"] = "Thống kê";
+}
+
+<div class="p-3 space-y-3">
+    <div>
+        <h1 class="text-lg font-medium">Thống kê tổng quan</h1>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Tổng sáng kiến</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKien</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Đã công nhận</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienDaCongNhan</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Chờ duyệt</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienChoDuyet</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Yêu cầu chỉnh sửa</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienYeuCauChinhSua</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Không công nhận</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienKhongCongNhan</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Yêu cầu phúc khảo</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienYeuCauPhucKhao</div>
+        </div>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Chờ phúc khảo</div>
+            <div class="text-3xl font-bold">@Model.TotalSangKienChoPhucKhao</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Giảng viên</div>
+            <div class="text-3xl font-bold">@Model.TotalGiangVien</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Hội đồng</div>
+            <div class="text-3xl font-bold">@Model.TotalHoiDong</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Đơn vị</div>
+            <div class="text-3xl font-bold">@Model.TotalDonVi</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Ngành</div>
+            <div class="text-3xl font-bold">@Model.TotalNganh</div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="text-base text-base-content/70">Chủ đầu tư</div>
+            <div class="text-3xl font-bold">@Model.TotalChuDauTu</div>
+        </div>
+    </div>
+
+    <div class="grid gap-3 xl:grid-cols-2">
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h2 class="text-lg font-medium">Tỷ lệ trạng thái sáng kiến</h2>
+                </div>
+            </div>
+            <div class="relative h-72">
+                <canvas id="chartStatus" class="absolute inset-0 w-full h-full"></canvas>
+            </div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="mb-3">
+                <h2 class="text-lg font-medium">Top đơn vị có nhiều sáng kiến công nhận</h2>
+            </div>
+            <div class="relative h-72">
+                <canvas id="chartTopDonVi" class="absolute inset-0 w-full h-full"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-3 xl:grid-cols-2">
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="mb-3">
+                <h2 class="text-lg font-medium">Top giảng viên có sáng kiến công nhận</h2>
+            </div>
+            <div class="relative h-72">
+                <canvas id="chartTopGiangVien" class="absolute inset-0 w-full h-full"></canvas>
+            </div>
+        </div>
+        <div class="card bg-base-200 shadow-sm p-3">
+            <div class="mb-3">
+                <h2 class="text-lg font-medium">Sáng kiến nộp theo tháng (6 tháng)</h2>
+            </div>
+            <div class="relative h-72">
+                <canvas id="chartNopThang" class="absolute inset-0 w-full h-full"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const statusLabels = @Html.Raw(JsonSerializer.Serialize(Model.TrangThaiLabels));
+        const statusValues = @Html.Raw(JsonSerializer.Serialize(Model.TrangThaiValues));
+        const topDonViLabels = @Html.Raw(JsonSerializer.Serialize(Model.TopDonViLabels));
+        const topDonViValues = @Html.Raw(JsonSerializer.Serialize(Model.TopDonViValues));
+        const topGiangVienLabels = @Html.Raw(JsonSerializer.Serialize(Model.TopGiangVienLabels));
+        const topGiangVienValues = @Html.Raw(JsonSerializer.Serialize(Model.TopGiangVienValues));
+        const thangLabels = @Html.Raw(JsonSerializer.Serialize(Model.ThangLabels));
+        const thangNopValues = @Html.Raw(JsonSerializer.Serialize(Model.ThangNopValues));
+
+        const chartColors = [
+            '#2563EB',
+            '#10B981',
+            '#F59E0B',
+            '#EF4444',
+            '#8B5CF6',
+            '#14B8A6',
+            '#EC4899',
+            '#6366F1',
+            '#06B6D4'
+        ];
+
+        const chartTextColor = '#1b1718';
+        const chartGridColor = '#9d999a';
+
+        const getChartColors = (length) => {
+            const colors = [];
+            for (let i = 0; i < length; i++) {
+                colors.push(chartColors[i % chartColors.length]);
+            }
+            return colors;
+        };
+
+        new Chart(document.getElementById('chartStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    data: statusValues,
+                    backgroundColor: chartColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: chartTextColor, font: { weight: '500' } } }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById('chartTopDonVi'), {
+            type: 'bar',
+            data: {
+                labels: topDonViLabels,
+                datasets: [{
+                    label: 'Số sáng kiến',
+                    data: topDonViValues,
+                    backgroundColor: getChartColors(topDonViLabels.length),
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        ticks: {
+                            color: chartTextColor,
+                            stepSize: 1,
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        },
+                        grid: { color: chartGridColor },
+                        beginAtZero: true
+                    },
+                    y: {
+                        ticks: { color: chartTextColor },
+                        grid: { color: chartGridColor }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById('chartTopGiangVien'), {
+            type: 'bar',
+            data: {
+                labels: topGiangVienLabels,
+                datasets: [{
+                    label: 'Số sáng kiến',
+                    data: topGiangVienValues,
+                    backgroundColor: getChartColors(topGiangVienLabels.length),
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        ticks: {
+                            color: chartTextColor,
+                            stepSize: 1,
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        },
+                        grid: { color: chartGridColor },
+                        beginAtZero: true
+                    },
+                    y: {
+                        ticks: { color: chartTextColor },
+                        grid: { color: chartGridColor }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById('chartNopThang'), {
+            type: 'bar',
+            data: {
+                labels: thangLabels,
+                datasets: [{
+                    label: 'Số sáng kiến nộp',
+                    data: thangNopValues,
+                    backgroundColor: '#2563EB',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: { color: chartTextColor },
+                        grid: { color: chartGridColor }
+                    },
+                    y: {
+                        ticks: {
+                            color: chartTextColor,
+                            stepSize: 1,
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        },
+                        grid: { color: chartGridColor },
+                        beginAtZero: true
+                    }
+                },
+                plugins: { legend: { display: false } },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+}

@@ -1,0 +1,120 @@
+@model List<TaiKhoanVM>
+
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+    int stttk = 1;
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">Danh sách tài khoản</h2>
+        <a asp-action="ChiTiet" asp-controller="TaiKhoan" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm tài khoản</a>
+    </div>
+
+    <div class="overflow-x-auto rounded-box border border-base-300">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="p-2 text-base-content w-20">STT</th>
+                    <th class="p-2 text-base-content">Họ tên</th>
+                    <th class="p-2 text-base-content">Tên đăng nhập</th>
+                    <th class="p-2 text-base-content">Quyền</th>
+                    <th class="p-2 text-base-content">Trạng thái</th>
+                    <th class="p-2 text-base-content w-20">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Model != null && Model.Count > 0) {
+                    @foreach (var taiKhoan in Model)
+                    {
+                        <tr class="align-top">
+                            <td class="p-2">
+                                @stttk
+                            </td>
+                            <td class="p-2">
+                                @taiKhoan.HoTen
+                            </td>
+                            <td class="p-2">
+                                @taiKhoan.TenDangNhap
+                            </td>
+                            <td class="p-2">
+                                @taiKhoan.TenQuyen
+                            </td>
+                            <td class="p-2">
+                                @taiKhoan.TenTrangThai
+                            </td>
+                            <td class="p-2">
+                                <div class="flex items-center gap-2">
+                                    <a asp-action="ChiTiet" asp-controller="TaiKhoan" asp-route-ma="@taiKhoan.MaTK" class="tooltip tooltip-left" data-tip="Xem chi tiết tài khoản">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
+                                            <path d="M226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.68-17.8h220.36v36.92h-220.3q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-220.3h36.92v220.36q0 25.88-17.8 43.68t-43.55 17.8H226.89Zm163.76-198.77-26.34-26.34 367.27-366.89h-176.5v-36.92h239.38v239.38h-36.92v-176.5L390.65-364.31Z"/>
+                                        </svg>
+                                    </a>
+                                    <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('khoa_mo_tai_khoan_modal_@taiKhoan.MaTK').showModal()" data-tip="@(taiKhoan.TrangThaiTK == 1 ? "Khóa tài khoản" : "Mở khóa tài khoản")">
+                                        @if(taiKhoan.TrangThaiTK == 1) {
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
+                                                <path d="M267.08-126.15q-25.58 0-43.56-17.98-17.98-17.99-17.98-43.56v-347.08q0-25.58 17.98-43.56 17.98-17.98 43.56-17.98h57.23v-78.54q0-65.34 45.29-110.63 45.28-45.29 110.4-45.29t110.4 45.29q45.29 45.29 45.29 110.63v78.54h57.23q25.58 0 43.56 17.98 17.98 17.98 17.98 43.56v347.08q0 25.57-17.98 43.56-17.98 17.98-43.56 17.98H267.08Zm0-36.93h425.84q10.77 0 17.7-6.92 6.92-6.92 6.92-17.69v-347.08q0-10.77-6.92-17.69-6.93-6.92-17.7-6.92H267.08q-10.77 0-17.7 6.92-6.92 6.92-6.92 17.69v347.08q0 10.77 6.92 17.69 6.93 6.92 17.7 6.92Zm254.34-156.78q16.73-16.79 16.73-41.31 0-24.52-16.66-41.37-16.67-16.84-41.43-16.84-24.75 0-41.48 16.78-16.73 16.79-16.73 41.3 0 24.52 16.66 41.37 16.67 16.85 41.43 16.85 24.75 0 41.48-16.78ZM361.23-596.31h237.54v-78.86q0-49.29-34.62-83.98-34.62-34.7-84.08-34.7-49.45 0-84.15 34.69-34.69 34.69-34.69 84.24v78.61ZM242.46-163.08v-396.3 396.3Z"/>
+                                            </svg>
+                                        } else {
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
+                                                <path d="M267.08-596.31h331.69v-78.86q0-49.29-34.62-83.98-34.62-34.7-84.08-34.7-49.45 0-84.15 34.64-34.69 34.65-34.69 84.13h-36.92q0-65.11 45.29-110.4 45.28-45.29 110.4-45.29t110.4 45.29q45.29 45.29 45.29 110.63v78.54h57.23q25.58 0 43.56 17.98 17.98 17.98 17.98 43.56v347.08q0 25.57-17.98 43.56-17.98 17.98-43.56 17.98H267.08q-25.58 0-43.56-17.98-17.98-17.99-17.98-43.56v-347.08q0-25.58 17.98-43.56 17.98-17.98 43.56-17.98Zm0 433.23h425.84q10.77 0 17.7-6.92 6.92-6.92 6.92-17.69v-347.08q0-10.77-6.92-17.69-6.93-6.92-17.7-6.92H267.08q-10.77 0-17.7 6.92-6.92 6.92-6.92 17.69v347.08q0 10.77 6.92 17.69 6.93 6.92 17.7 6.92Zm254.34-156.78q16.73-16.79 16.73-41.31 0-24.52-16.66-41.37-16.67-16.84-41.43-16.84-24.75 0-41.48 16.78-16.73 16.79-16.73 41.3 0 24.52 16.66 41.37 16.67 16.85 41.43 16.85 24.75 0 41.48-16.78ZM242.46-163.08v-396.3 396.3Z"/>
+                                            </svg>
+                                        }
+                                    </button>
+
+                                    <dialog id="khoa_mo_tai_khoan_modal_@taiKhoan.MaTK" class="modal">
+                                        <div class="modal-box p-3">
+                                            <h3 class="text-lg">
+                                                Xác nhận
+                                            </h3>
+                                            <p class="text-base mb-3 mt-2">
+                                                Bạn có chắc chắn muốn @(taiKhoan.TrangThaiTK == 1 ? "khóa" : "mở khóa") tài khoản "@taiKhoan.TenDangNhap" không?
+                                            </p>
+                                            <form method="post" asp-action="KhoaMo" asp-controller="TaiKhoan" class="flex flex-col gap-3">
+                                                <input type="hidden" name="ma" value="@taiKhoan.MaTK">
+                                                <div class="modal-action mt-0 gap-3 ml-auto">
+                                                    <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('khoa_mo_tai_khoan_modal_@taiKhoan.MaTK').close()">Thoát</button>
+                                                    <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">@(taiKhoan.TrangThaiTK == 1 ? "Khóa" : "Mở khóa")</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </dialog>
+                                </div>
+                            </td>
+                        </tr>
+
+                        stttk++;
+                    }
+                } else {
+                    <tr>
+                        <td colspan="6" class="p-2 text-center">Danh sách rỗng</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

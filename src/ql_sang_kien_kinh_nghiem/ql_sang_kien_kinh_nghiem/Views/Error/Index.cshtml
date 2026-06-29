@@ -1,0 +1,19 @@
+@{
+    Layout = "_BlankLayout";
+
+    var errorMessage = "";
+
+    if (!string.IsNullOrWhiteSpace(ViewData["ErrorMessage"]?.ToString()))
+    {
+        errorMessage = ViewData["ErrorMessage"]?.ToString();
+    }
+
+    ViewData["Title"] = errorMessage;
+}
+
+<div class="flex h-screen items-center justify-center">
+    <div class="flex flex-col gap-3 items-center">
+        <h1 class="text-lg font-medium">@errorMessage</h1>
+        <a href="/" class="btn btn-primary text-base-100 font-normal shadow-none">Thử lại</a>
+    </div>
+</div>

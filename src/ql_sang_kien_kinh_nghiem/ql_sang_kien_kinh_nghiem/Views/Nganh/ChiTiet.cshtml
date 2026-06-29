@@ -1,0 +1,58 @@
+@model NganhVM
+
+@{
+    ViewData["Title"] = (Model.MaNganh > 0 ? "Chi tiết " : "Thêm ") + "ngành";
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
+        @if(Model.MaNganh > 0) {
+            <a asp-action="ChiTiet" asp-controller="Nganh" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm ngành</a>
+        }
+    </div>
+
+    <form method="post" asp-action="ChiTiet" asp-controller="Nganh" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <input type="hidden" asp-for="MaNganh">
+        <label>
+            Tên ngành
+            <input type="text" asp-for="TenNganh" class="input w-full mt-1" placeholder="Nhập tên ngành">
+            <span asp-validation-for="TenNganh" class="text-error text-sm"></span>
+        </label>
+        <div class="flex gap-3 justify-between items-center flex-wrap">
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <div class="flex gap-3 ml-auto flex-wrap">
+                <a asp-action="Index" asp-controller="Nganh" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </div>
+    </form>
+</div>             
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

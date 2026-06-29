@@ -1,0 +1,113 @@
+@model List<NganhVM>
+
+@{
+    ViewData["Title"] = "Quản lý môn học";
+    int sttmh = 1;
+}
+
+<div class="p-3 pb-0">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">Danh sách môn học</h2>
+        <a asp-action="ChiTiet" asp-controller="MonHoc" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm môn học</a>
+    </div>
+    
+    @if(Model != null && Model.Count > 0) {
+        @foreach (var nganh in Model)
+        {
+            <h3 class="text-base mb-3">Ngành @nganh.TenNganh</h3>
+            <div class="overflow-x-auto rounded-box border border-base-300 mb-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="p-2 text-base-content w-20">STT</th>
+                            <th class="p-2 text-base-content">Tên môn</th>
+                            <th class="p-2 text-base-content w-20">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(nganh.DSMonHoc != null && nganh.DSMonHoc.Count > 0) {
+                            @foreach (var mon in nganh.DSMonHoc)
+                            {
+                                <tr class="align-top">
+                                    <td class="p-2">
+                                        @sttmh
+                                    </td>
+                                    <td class="p-2">
+                                        @mon.TenMH
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="flex items-center gap-2">
+                                            <a asp-action="ChiTiet" asp-controller="MonHoc" asp-route-ma="@mon.MaMH" class="tooltip tooltip-left" data-tip="Xem chi tiết môn học">
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
+                                                    <path d="M226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.68-17.8h220.36v36.92h-220.3q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-220.3h36.92v220.36q0 25.88-17.8 43.68t-43.55 17.8H226.89Zm163.76-198.77-26.34-26.34 367.27-366.89h-176.5v-36.92h239.38v239.38h-36.92v-176.5L390.65-364.31Z"/>
+                                                </svg>
+                                            </a>
+                                            @if(!@mon.DaSuDung) {
+                                                <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').showModal()" data-tip="Xóa môn học">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-error)">
+                                                        <path d="m336-310.81 144-144 144 144L649.58-336l-144-144 144-144L624-649.58l-144 144-144-144L310.81-624l144 144-144 144L336-310.81ZM226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.55-17.8h506.22q25.75 0 43.55 17.8 17.8 17.8 17.8 43.55v506.22q0 25.75-17.8 43.55-17.8 17.8-43.55 17.8H226.89Zm.19-36.92h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-505.84q0-9.23-7.69-16.93-7.7-7.69-16.93-7.69H227.08q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69Zm-24.62-555.08V-202.46-757.54Z"/>
+                                                    </svg>
+                                                </button>
+                                            }
+
+                                            <dialog id="xoa_mon_hoc_modal_@mon.MaMH" class="modal">
+                                                <div class="modal-box p-3">
+                                                    <h3 class="text-lg">
+                                                        Xác nhận
+                                                    </h3>
+                                                    <p class="text-base mb-3 mt-2">
+                                                        Bạn có chắc chắn muốn xóa môn học "@mon.TenMH" không?
+                                                    </p>
+                                                    <form method="post" asp-action="Xoa" asp-controller="MonHoc" class="flex flex-col gap-3">
+                                                        <input type="hidden" name="ma" value="@mon.MaMH">
+                                                        <div class="modal-action mt-0 gap-3 ml-auto">
+                                                            <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').close()">Thoát</button>
+                                                            <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xóa</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </dialog>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                sttmh++;
+                            }
+                        } else {
+                            <tr>
+                                <td colspan="3" class="p-2 text-center">Danh sách rỗng</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            sttmh = 1;
+        }
+    } else {
+        <p>Danh sách rỗng</p>
+    }
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

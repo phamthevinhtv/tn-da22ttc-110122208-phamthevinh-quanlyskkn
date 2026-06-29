@@ -1,0 +1,59 @@
+@model DatLaiMatKhauVM
+
+@{
+    Layout = "_BlankLayout";
+    ViewData["Title"] = "Yêu cầu đặt lại mật khẩu";
+}
+
+<div class="h-screen flex justify-center items-center p-3">
+    <div class="card shadow-md border border-base-300 p-6 w-100">
+        <div class="flex items-center justify-center gap-3 pb-3 border-b border-base-300">
+            <img src="~/images/logo.png" alt="Logo" class="w-10">
+            <p class="text-lg font-medium italic text-primary">Sáng kiến kinh nghiệm</p>
+        </div>
+        <h1 class="text-lg font-medium text-center my-3">Đặt lại mật khẩu</h1>
+        <form method="post" asp-action="DatLaiMatKhau" asp-controller="TaiKhoan" asp class="flex flex-col gap-3">
+            <label>
+                Tên đăng nhập
+                <input type="text" asp-for="TenDangNhap" class="input w-full mt-1" placeholder="Nhập tên đăng nhập">
+                <span asp-validation-for="TenDangNhap" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Email
+                <input type="email" asp-for="Email" class="input w-full mt-1" placeholder="Nhập email">
+                <span asp-validation-for="Email" class="text-error text-sm"></span>
+            </label>
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Gửi yêu cầu</button>
+            <a asp-action="DangNhap" asp-controller="TaiKhoan" class="btn btn-soft font-normal shadow-none">Thoát</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

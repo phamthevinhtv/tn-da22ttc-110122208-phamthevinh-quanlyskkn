@@ -1,0 +1,73 @@
+@model ChuDauTuVM
+
+@{
+    ViewData["Title"] = (Model.MaCDT > 0 ? "Chi tiết " : "Thêm ") + "chủ đầu tư sáng kiến";
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
+        @if(Model.MaCDT > 0) {
+            <a asp-action="ChiTiet" asp-controller="ChuDauTu" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm chủ đầu tư</a>
+        }
+    </div>
+
+    <form method="post" asp-action="ChiTiet" asp-controller="ChuDauTu" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <input type="hidden" asp-for="MaCDT">
+        <label>
+            Tên chủ đầu tư
+            <input type="text" asp-for="TenCDT" class="input w-full mt-1" placeholder="Nhập tên chủ đầu tư">
+            <span asp-validation-for="TenCDT" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Email
+            <input type="email" asp-for="Email" class="input w-full mt-1" placeholder="Nhập email">
+            <span asp-validation-for="Email" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Số điện thoại
+            <input type="text" asp-for="SoDienThoai" class="input w-full mt-1" placeholder="Nhập số điện thoại">
+            <span asp-validation-for="SoDienThoai" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Địa chỉ
+            <input type="text" asp-for="DiaChi" class="input w-full mt-1" placeholder="Nhập địa chỉ">
+            <span asp-validation-for="DiaChi" class="text-error text-sm"></span>
+        </label>
+       <div class="flex gap-3 justify-between items-center flex-wrap">
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <div class="flex gap-3 ml-auto flex-wrap">
+                <a asp-action="Index" asp-controller="ChuDauTu" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </div>
+    </form>
+</div>             
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" /> 
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

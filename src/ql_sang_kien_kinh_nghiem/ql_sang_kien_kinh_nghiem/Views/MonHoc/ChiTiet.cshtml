@@ -1,0 +1,110 @@
+@model MonHocVM
+
+@{
+    ViewData["Title"] = (Model.MaMH > 0 ? "Chi tiết " : "Thêm ") + "môn học";
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
+        @if(Model.MaMH > 0) {
+            <a asp-action="ChiTiet" asp-controller="MonHoc" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm môn học</a>
+        }
+    </div>
+
+    <form method="post" asp-action="ChiTiet" asp-controller="MonHoc" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <input type="hidden" asp-for="MaMH">
+        <label>
+            Ngành
+            <select asp-for="MaNganh" asp-items="Model.DSNganh" class="select w-full mt-1">
+                <option disabled selected>Chọn ngành</option>
+            </select>
+            <span asp-validation-for="MaNganh" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Tên môn học
+            <input type="text" asp-for="TenMH" class="input w-full mt-1" placeholder="Nhập tên môn học">
+            <span asp-validation-for="TenMH" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Mô tả môn học
+            <textarea asp-for="MoTaMH" class="textarea w-full mt-1" placeholder="Nhập mô tả môn học"></textarea>
+        </label>
+        <div class="flex gap-3 justify-between items-center flex-wrap">
+            <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+            <div class="flex gap-3 ml-auto flex-wrap">
+                <a asp-action="Index" asp-controller="MonHoc" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                @if((Model.MaMH) > 0) {
+                    <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('xu_ly_cum_tu_modal').showModal()">Xử lý cụm</button>
+                    <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('tao_mo_ta_tu_dong_modal').showModal()">Tạo mô tả tự động</button>
+                }
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<dialog id="xu_ly_cum_tu_modal" class="modal">
+    <div class="modal-box p-3">
+        <h3 class="text-lg">
+            Xác nhận
+        </h3>
+        <p class="text-base mb-3 mt-2">
+            Bạn có chắc chắn muốn xử lý cụm từ cho mô tả môn học này không?
+        </p>
+        <form method="post" asp-action="TaoCacCumTu" asp-controller="MonHoc" class="flex flex-col gap-3">
+            <input type="hidden" id="ma" name="ma" value="@Model.MaMH">
+            <input type="hidden" id="moTaMH" name="moTaMH" value="@Model.MoTaMH">
+            <div class="modal-action mt-0 gap-3 ml-auto">
+                <button type="button" class="btn btn-soft font-normal" onclick="document.getElementById('xu_ly_cum_tu_modal').close()">Thoát</button>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xử lý</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="tao_mo_ta_tu_dong_modal" class="modal">
+    <div class="modal-box p-3">
+        <h3 class="text-lg">
+            Xác nhận
+        </h3>
+        <p class="text-base mb-3 mt-2">
+            Bạn có chắc chắn muốn tạo mô tả tự động cho môn học này không?
+        </p>
+        <form method="post" asp-action="TaoMoTaMonHocAI" asp-controller="MonHoc" class="flex flex-col gap-3">
+            <input type="hidden" id="ma" name="ma" value="@Model.MaMH">
+            <div class="modal-action mt-0 gap-3 ml-auto">
+                <button type="button" class="btn btn-soft font-normal" onclick="document.getElementById('tao_mo_ta_tu_dong_modal').close()">Thoát</button>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Tạo</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+</script>

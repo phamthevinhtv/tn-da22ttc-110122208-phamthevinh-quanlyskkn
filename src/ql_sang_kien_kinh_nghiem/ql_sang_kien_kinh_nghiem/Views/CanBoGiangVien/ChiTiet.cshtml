@@ -1,0 +1,319 @@
+@model CanBoGiangVienVM
+
+@{
+    ViewData["Title"] = (!string.IsNullOrEmpty(Model.MaCBGV) ? "Chi tiết " : "Thêm ") + "cán bộ/giảng viên";
+    int stttdn = 1;
+    int sttcvdv = 1;
+}
+
+<div class="p-3">
+    <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
+        <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
+        @if(!string.IsNullOrEmpty(Model.MaCBGV)) {
+            <a asp-action="ChiTiet" asp-controller="CanBoGiangVien" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm cán bộ/giảng viên</a>
+        }
+    </div>
+
+    <div class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
+        <form method="post" asp-action="ChiTiet" asp-controller="CanBoGiangVien" class="flex flex-col gap-3">
+            <input type="hidden" asp-for="MaCBGV">
+            <span asp-validation-for="MaCBGV" class="text-error text-sm"></span>
+            <label>
+                Tên cán bộ/giảng viên
+                <input type="text" asp-for="HoTen" class="input w-full mt-1" placeholder="Nhập tên cán bộ/giảng viên">
+                <span asp-validation-for="HoTen" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Email
+                <input type="email" asp-for="Email" class="input w-full mt-1" placeholder="Nhập email">
+                <span asp-validation-for="Email" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Số điện thoại
+                <input type="text" asp-for="SoDienThoai" class="input w-full mt-1" placeholder="Nhập số điện thoại">
+                <span asp-validation-for="SoDienThoai" class="text-error text-sm"></span>
+            </label>
+            <div class="flex gap-3 justify-between items-center flex-wrap">
+                <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>
+                <div class="flex gap-3 ml-auto flex-wrap">
+                    <a asp-action="Index" asp-controller="CanBoGiangVien" class="btn btn-soft font-normal shadow-none">Thoát</a>
+                    <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+                </div>
+            </div>
+        </form>
+        @if(!string.IsNullOrWhiteSpace(Model.MaCBGV)) {
+            <div class="border-t border-base-300 pt-3">
+                <div class="flex justify-between items-center mb-3 flex-wrap">
+                    <h3 class="text-base">Trình độ - ngành</h3>
+                    <button class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('them_trinh_do_nganh_modal').showModal()">Thêm trình độ - ngành</button>
+               </div>
+                <div class="overflow-x-auto rounded-box border border-base-300">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="p-2 text-base-content w-20">STT</th>
+                                <th class="p-2 text-base-content">Trình độ</th>
+                                <th class="p-2 text-base-content">Ngành</th>
+                                <th class="p-2 text-base-content w-20">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model.CBGVChucVuDonViVM != null && Model.DSTrinhDoNganh.Count > 0) {
+                                @foreach(var trinhDoNganh in @Model.DSTrinhDoNganh) {
+                                    <tr class="align-top">
+                                        <td class="p-2">
+                                            @stttdn
+                                        </td>
+                                        <td class="p-2">
+                                            @trinhDoNganh.TenTD
+                                        </td>
+                                        <td class="p-2">
+                                            @trinhDoNganh.TenNganh
+                                        </td>
+                                        <td class="p-2">
+                                            <div class="flex items-center gap-2">
+                                                <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('xoa_cbgv_td_nganh_modal_@(trinhDoNganh.MaCBGV)_@(trinhDoNganh.MaTD)_@trinhDoNganh.MaNganh').showModal()" data-tip="Xóa trình độ - ngành">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-error)">
+                                                        <path d="m336-310.81 144-144 144 144L649.58-336l-144-144 144-144L624-649.58l-144 144-144-144L310.81-624l144 144-144 144L336-310.81ZM226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.55-17.8h506.22q25.75 0 43.55 17.8 17.8 17.8 17.8 43.55v506.22q0 25.75-17.8 43.55-17.8 17.8-43.55 17.8H226.89Zm.19-36.92h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-505.84q0-9.23-7.69-16.93-7.7-7.69-16.93-7.69H227.08q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69Zm-24.62-555.08V-202.46-757.54Z"/>
+                                                    </svg>
+                                                </button>
+
+                                                <dialog id="xoa_cbgv_td_nganh_modal_@(trinhDoNganh.MaCBGV)_@(trinhDoNganh.MaTD)_@trinhDoNganh.MaNganh" class="modal">
+                                                    <div class="modal-box p-3">
+                                                        <h3 class="text-lg font-medium">
+                                                            Xác nhận
+                                                        </h3>
+                                                        <p class="text-base mb-3 mt-2">
+                                                            Bạn có chắc chắn muốn xóa trình độ "@trinhDoNganh.TenTD" - ngành "@trinhDoNganh.TenNganh" không?
+                                                        </p>
+                                                        <form method="post" asp-action="XoaCBGVTDN" asp-controller="CanBoGiangVien" class="flex flex-col gap-3">
+                                                            <input type="hidden" asp-for="CBGVTrinhDoNganhVM.MaCBGV" value="@Model.MaCBGV">
+                                                            <input type="hidden" asp-for="CBGVTrinhDoNganhVM.MaTD" value="@trinhDoNganh.MaTD">
+                                                            <input type="hidden" asp-for="CBGVTrinhDoNganhVM.MaNganh" value="@trinhDoNganh.MaNganh">
+                                                            <div class="modal-action mt-0 gap-3 ml-auto">
+                                                                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('xoa_cbgv_td_nganh_modal_@(trinhDoNganh.MaCBGV)_@(trinhDoNganh.MaTD)_@trinhDoNganh.MaNganh').close()">Thoát</button>
+                                                                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xóa</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </dialog>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    stttdn++; 
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="4" class="text-center">Danh sách rỗng</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-3 flex-wrap">
+                    <h3 class="text-base">Chức vụ - đơn vị</h3>
+                    <button class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('them_chuc_vu_don_vi_modal').showModal()">Thêm chức vụ - đơn vị</button>
+                </div>
+                <div class="overflow-x-auto rounded-box border border-base-300">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="p-2 text-base-content w-20">STT</th>
+                                <th class="p-2 text-base-content">Chức vụ</th>
+                                <th class="p-2 text-base-content">Đơn vị</th>
+                                <th class="p-2 text-base-content">Thời gian bắt đầu</th>
+                                <th class="p-2 text-base-content">Thời gian kết thúc</th>
+                                <th class="p-2 text-base-content w-20">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model.DSChucVuDonVi != null && Model.DSChucVuDonVi.Count > 0) {
+                                @foreach(var chucVuDonVi in @Model.DSChucVuDonVi) {
+                                    <tr class="align-top">
+                                        <td class="p-2">
+                                            @sttcvdv
+                                        </td>
+                                        <td class="p-2">
+                                            @(chucVuDonVi.MaCV == 1 ? "-" : chucVuDonVi.TenCV)
+                                        </td>
+                                        <td class="p-2">
+                                            @chucVuDonVi.TenDV
+                                        </td>
+                                        <td class="p-2">
+                                            @chucVuDonVi.ThoiGianBatDau?.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td class="p-2">
+                                            @chucVuDonVi.ThoiGianKetThuc?.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td class="p-2">
+                                            <div class="flex items-center gap-2">
+                                               <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('xoa_cv_dv_modal_@(chucVuDonVi.MaCBGV)_@(chucVuDonVi.MaCV)_@chucVuDonVi.MaDV').showModal()" data-tip="Xóa chức vụ - đơn vị">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-error)">
+                                                        <path d="m336-310.81 144-144 144 144L649.58-336l-144-144 144-144L624-649.58l-144 144-144-144L310.81-624l144 144-144 144L336-310.81ZM226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.55-17.8h506.22q25.75 0 43.55 17.8 17.8 17.8 17.8 43.55v506.22q0 25.75-17.8 43.55-17.8 17.8-43.55 17.8H226.89Zm.19-36.92h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-505.84q0-9.23-7.69-16.93-7.7-7.69-16.93-7.69H227.08q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69Zm-24.62-555.08V-202.46-757.54Z"/>
+                                                    </svg>
+                                                </button>
+
+                                                <dialog id="xoa_cv_dv_modal_@(chucVuDonVi.MaCBGV)_@(chucVuDonVi.MaCV)_@chucVuDonVi.MaDV" class="modal">
+                                                    <div class="modal-box p-3">
+                                                        <h3 class="text-lg font-medium">
+                                                            Xác nhận
+                                                        </h3>
+                                                        @if(chucVuDonVi.MaCV == 1) {
+                                                            <p class="text-base mb-3 mt-2">Bạn có chắc chắn muốn xóa đơn vị "@chucVuDonVi.TenDV" không?</p>
+                                                        } else {
+                                                            <p class="text-base mb-3 mt-2">Bạn có chắc chắn muốn xóa chức vụ "@chucVuDonVi.TenCV" - đơn vị "@chucVuDonVi.TenDV" không?</p>
+                                                        }
+                                                        <form method="post" asp-action="XoaCBGVCVDV" asp-controller="CanBoGiangVien" class="flex flex-col gap-3">
+                                                            <input type="hidden" asp-for="CBGVChucVuDonViVM.MaCBGV" value="@Model.MaCBGV">
+                                                            <input type="hidden" asp-for="CBGVChucVuDonViVM.MaCV" value="@chucVuDonVi.MaCV">
+                                                            <input type="hidden" asp-for="CBGVChucVuDonViVM.MaDV" value="@chucVuDonVi.MaDV">
+                                                            <div class="modal-action mt-0 gap-3 ml-auto">
+                                                                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('xoa_cv_dv_modal_@(chucVuDonVi.MaCBGV)_@(chucVuDonVi.MaCV)_@chucVuDonVi.MaDV').close()">Thoát</button>
+                                                                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xóa</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </dialog>     
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    sttcvdv++; 
+                                }
+                            } else {
+                                <tr>
+                                    <td colspan="6" class="text-center">Danh sách rỗng</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>             
+
+<dialog id="them_trinh_do_nganh_modal" class="modal">
+    <div class="modal-box p-3">
+        <h3 class="text-lg font-medium mb-3">
+            Chi tiết trình độ - ngành
+        </h3>
+        <form method="post" asp-action="LuuCBGVTDN" asp-controller="CanBoGiangVien" class="flex flex-col gap-3">
+            <input type="hidden" asp-for="CBGVTrinhDoNganhVM.MaCBGV" value="@Model.MaCBGV">
+            <label>
+                Trình độ
+                <select asp-for="CBGVTrinhDoNganhVM.MaTD" asp-items="Model.DSTrinhDo" class="select w-full mt-1">
+                    <option disabled selected>Chọn trình độ</option>
+                </select>
+                <span asp-validation-for="CBGVTrinhDoNganhVM.MaTD" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Ngành
+                <select asp-for="CBGVTrinhDoNganhVM.MaNganh" asp-items="Model.DSNganh" class="select w-full mt-1">
+                    <option disabled selected>Chọn ngành</option>
+                </select>
+                <span asp-validation-for="CBGVTrinhDoNganhVM.MaNganh" class="text-error text-sm"></span>
+            </label>
+            <div class="modal-action mt-0 gap-3 ml-auto">
+                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('them_trinh_do_nganh_modal').close()">Thoát</button>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="them_chuc_vu_don_vi_modal" class="modal">
+    <div class="modal-box p-3">
+        <h3 class="text-lg font-medium mb-3">
+            Chi tiết chức vụ - đơn vị
+        </h3>
+        <form method="post" asp-action="LuuCBGVCVDV" asp-controller="CanBoGiangVien" class="flex flex-col gap-3" id="form_cv_dv">
+            <input type="hidden" asp-for="CBGVChucVuDonViVM.MaCBGV" value="@Model.MaCBGV">
+            <label>
+                Chức vụ
+                <select asp-for="CBGVChucVuDonViVM.MaCV" asp-items="Model.DSChucVu" class="select w-full mt-1">
+                    <option disabled selected>Chọn chức vụ</option>
+                </select>
+                <span asp-validation-for="CBGVChucVuDonViVM.MaCV" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Đơn vị
+                <select asp-for="CBGVChucVuDonViVM.MaDV" asp-items="Model.DSDonVi" class="select w-full mt-1">
+                    <option disabled selected>Chọn đơn vị</option>
+                </select>
+                <span asp-validation-for="CBGVChucVuDonViVM.MaDV" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Thời gian bắt đầu
+                <input type="date" asp-for="CBGVChucVuDonViVM.ThoiGianBatDau" class="input w-full mt-1">
+                <span asp-validation-for="CBGVChucVuDonViVM.ThoiGianBatDau" class="text-error text-sm"></span>
+            </label>
+            <label>
+                Thời gian kết thúc
+                <input type="date" asp-for="CBGVChucVuDonViVM.ThoiGianKetThuc" class="input w-full mt-1">
+                <span asp-validation-for="CBGVChucVuDonViVM.ThoiGianKetThuc" class="text-error text-sm"></span>
+            </label>
+            <div class="modal-action mt-0 gap-3 ml-auto">
+                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('them_chuc_vu_don_vi_modal').close()">Thoát</button>
+                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Lưu</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@if (TempData["Success"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-success">
+            <span class="text-white">@TempData["Success"]</span>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div id="toast" class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span class="text-white">@TempData["Error"]</span>
+        </div>
+    </div>
+}
+
+<script>
+    setTimeout(() => {
+        document.getElementById('toast')?.remove();
+    }, 3000);
+
+    const formCVDV = document.getElementById("form_cv_dv");
+    const ngayBatDau = document.getElementById("CBGVChucVuDonViVM_ThoiGianBatDau");
+    const ngayKetThuc = document.getElementById("CBGVChucVuDonViVM_ThoiGianKetThuc");
+    const loiNgay = document.querySelector('[data-valmsg-for="CBGVChucVuDonViVM.ThoiGianKetThuc"]');
+
+    function kiemTraNgay() {
+        if (!ngayBatDau.value || !ngayKetThuc.value) {
+            loiNgay.textContent = "";
+            return;
+        }
+
+        const bd = new Date(ngayBatDau.value);
+        const kt = new Date(ngayKetThuc.value);
+
+        if (bd > kt) {
+
+            loiNgay.textContent = "Ngày kết thúc phải bằng hoặc sau ngày bắt đầu";
+            ngayKetThuc.value = "";
+            return;
+        }
+
+        loiNgay.textContent = "";
+        return;
+    }
+
+    ngayBatDau.addEventListener("change", kiemTraNgay);
+    ngayKetThuc.addEventListener("change", kiemTraNgay);
+</script>

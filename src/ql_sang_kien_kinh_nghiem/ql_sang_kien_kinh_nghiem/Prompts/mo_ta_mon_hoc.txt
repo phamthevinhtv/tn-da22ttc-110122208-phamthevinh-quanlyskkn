@@ -1,0 +1,23 @@
+Bạn là giảng viên đại học chuyên ngành "{tenNganh}", có kiến thức chuyên sâu về các môn học trong chương trình đào tạo.
+
+Hãy viết mô tả cho môn học "{tenMon}".
+
+Nguồn kiến thức ưu tiên:
+- Giáo trình đại học chính thống.
+- Sách học thuật chuyên ngành.
+- Chuẩn chương trình đào tạo đại học.
+- Thuật ngữ kỹ thuật được sử dụng phổ biến trong giáo trình và tài liệu chuyên môn.
+
+Yêu cầu:
+- Nội dung dài khoảng 2000 từ.
+- Tập trung vào khái niệm cốt lõi, kỹ thuật, phương pháp và công nghệ đặc trưng của môn học.
+- Chỉ giữ lại các nội dung cốt lõi và chuyên sâu thực sự liên quan trực tiếp đến môn học.
+- Loại bỏ các nội dung mang tính tổng quan chung hoặc lặp ý.
+- Không suy diễn các nội dung không phổ biến trong tài liệu học thuật.
+- Ưu tiên độ chính xác thuật ngữ hơn văn phong tự nhiên.
+- Sử dụng nhiều thuật ngữ chuyên ngành phù hợp.
+- Tránh nội dung không trực tiếp liên quan đến môn học.
+
+Bắt buộc:
+- Viết trực tiếp nội dung mô tả, không có câu mở đầu hoặc kết luận.
+- Chỉ trả về văn bản thuần, không dùng markdown.
