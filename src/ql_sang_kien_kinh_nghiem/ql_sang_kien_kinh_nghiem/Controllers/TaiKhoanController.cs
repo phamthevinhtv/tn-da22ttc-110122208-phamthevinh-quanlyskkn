@@ -28,10 +28,20 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "ADMIN")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = await _appDbContext.DbSetTaiKhoan.CountAsync();
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+
             var data = await _appDbContext.DbSetTaiKhoan
                 .OrderBy(x => x.TenDangNhap)
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
                 .Select(x => new TaiKhoanVM
                 {
                     MaTK = x.MaTK,
@@ -42,6 +52,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     HoTen = x.CanBoGiangVien != null ? x.CanBoGiangVien.HoTen : string.Empty
                 })
                 .ToListAsync();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
 
             return View(data);
         }
@@ -228,7 +241,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 new()
                 {
                     Value = "CBGV",
-                    Text = "Cán bộ/giảng viên"
+                    Text = "Cán bộ, giảng viên"
                 }
             };
 
@@ -303,7 +316,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 {
                     ModelState.AddModelError(
                         nameof(taiKhoanVM.MaCBGV),
-                        "Cán bộ/giảng viên không tồn tại"
+                        "Cán bộ, giảng viên không tồn tại"
                     );
 
                     await NapFormChiTiet(taiKhoanVM);
@@ -315,7 +328,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 {
                     ModelState.AddModelError(
                         nameof(taiKhoanVM.MaCBGV),
-                        "Cán bộ/giảng viên đã có tài khoản"
+                        "Cán bộ, giảng viên đã có tài khoản"
                     );
 
                     await NapFormChiTiet(taiKhoanVM);
@@ -327,7 +340,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 {
                     ModelState.AddModelError(
                         nameof(taiKhoanVM.MaCBGV),
-                        "Cán bộ/giảng viên đã có tài khoản"
+                        "Cán bộ, giảng viên đã có tài khoản"
                     );
 
                     await NapFormChiTiet(taiKhoanVM);
@@ -562,7 +575,24 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     Ten = x.CanBoGiangVien!.HoTen,
                     TenDangNhap = x.TenDangNhap,
                     Email = x.CanBoGiangVien.Email,
-                    SoDienThoai = x.CanBoGiangVien.SoDienThoai
+                    SoDienThoai = x.CanBoGiangVien.SoDienThoai,
+                    TenCVDV = string.Join("\n",
+                        _appDbContext.DbSetCBGVChucVuDonVi
+                        .Where(cvdv => cvdv.MaCBGV == x.MaCBGV)
+                        .Include(cvdv => cvdv.ChucVu)
+                        .Include(cvdv => cvdv.DonVi)
+                        .OrderByDescending(cvdv => cvdv.ThoiGianBatDau)
+                        .Select(cvdv => cvdv.ChucVu.MaCV != 1 ? cvdv.ChucVu.TenCV + " - " + cvdv.DonVi.TenDV + " (" + cvdv.ThoiGianBatDau.ToString("dd/MM/yyyy") + " - " + (cvdv.ThoiGianKetThuc.HasValue ? cvdv.ThoiGianKetThuc.Value.ToString("dd/MM/yyyy") : "nay") + ")" : cvdv.DonVi.TenDV + " (" + cvdv.ThoiGianBatDau.ToString("dd/MM/yyyy") + " - " + (cvdv.ThoiGianKetThuc.HasValue ? cvdv.ThoiGianKetThuc.Value.ToString("dd/MM/yyyy") : "nay") + ")")
+                        .ToList()
+                    ),
+                    TenTDN = string.Join("\n",
+                        _appDbContext.DbSetCBGVTrinhDoNganh
+                        .Where(td => td.MaCBGV == x.MaCBGV)
+                        .Include(td => td.TrinhDo)
+                        .Include(td => td.Nganh)
+                        .Select(td => td.TrinhDo.TenTD + " - " + td.Nganh.TenNganh)
+                        .ToList()
+                    )
                 })
                 .FirstOrDefault();
 

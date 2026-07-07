@@ -1,7 +1,7 @@
 @model CanBoGiangVienVM
 
 @{
-    ViewData["Title"] = (!string.IsNullOrEmpty(Model.MaCBGV) ? "Chi tiết " : "Thêm ") + "cán bộ/giảng viên";
+    ViewData["Title"] = (!string.IsNullOrEmpty(Model.MaCBGV) ? "Chi tiết " : "Thêm ") + "cán bộ, giảng viên";
     int stttdn = 1;
     int sttcvdv = 1;
 }
@@ -10,7 +10,7 @@
     <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
         <h2 class="text-lg font-medium">@ViewData["Title"]</h2>
         @if(!string.IsNullOrEmpty(Model.MaCBGV)) {
-            <a asp-action="ChiTiet" asp-controller="CanBoGiangVien" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm cán bộ/giảng viên</a>
+            <a asp-action="ChiTiet" asp-controller="CanBoGiangVien" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm cán bộ, giảng viên</a>
         }
     </div>
 
@@ -19,8 +19,8 @@
             <input type="hidden" asp-for="MaCBGV">
             <span asp-validation-for="MaCBGV" class="text-error text-sm"></span>
             <label>
-                Tên cán bộ/giảng viên
-                <input type="text" asp-for="HoTen" class="input w-full mt-1" placeholder="Nhập tên cán bộ/giảng viên">
+                Tên cán bộ, giảng viên
+                <input type="text" asp-for="HoTen" class="input w-full mt-1" placeholder="Nhập tên cán bộ, giảng viên">
                 <span asp-validation-for="HoTen" class="text-error text-sm"></span>
             </label>
             <label>

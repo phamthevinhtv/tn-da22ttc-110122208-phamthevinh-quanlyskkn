@@ -16,6 +16,9 @@
 >- Hỗ trợ quản lý quá trình đánh giá sáng kiến. 
 >- Xây dựng chức năng tìm kiếm sáng kiến theo hướng ngữ nghĩa ở mức cơ bản. 
 >- Hỗ trợ thống kê trực quan hóa dữ liệu phục vụ công tác quản lý. 
+>
 > ### Công nghệ:
 >
-> Đề tài sử dụng **ASP.NET Core MVC**, ngôn ngữ lập trình **C#**, cơ sở dữ liệu **Oracle** và giao diện được xây dựng bằng **HTML, TailwindCSS & DaisyUI**.
+> Hệ thống sử dụng **ASP.NET Core MVC**, ngôn ngữ lập trình **C#**, cơ sở dữ liệu **Oracle** và giao diện được xây dựng bằng **HTML, TailwindCSS & DaisyUI**.
+>
+> [Xem hướng dẫn chạy chương trình](docs/HuongDanChayChuongTrinh.pdf)

@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Thông tin cá nhân";
-    string? quyen = User.FindFirst(ClaimTypes.Role)?.Value;
 }
 
 <div class="p-3">
@@ -12,7 +11,7 @@
     <form method="post" asp-action="CaNhan" asp-controller="TaiKhoan" class="border border-base-300 p-3 rounded-box flex flex-col gap-3">
         <input type="hidden" asp-for="Ten">
         <label>
-            @(quyen == "CBGV" ? "Họ tên" : "Tên đơn vị")
+            Họ tên
             <input type="text" disabled asp-for="Ten" class="input w-full mt-1">
             <span asp-validation-for="Ten" class="text-error text-sm"></span>
         </label>
@@ -30,6 +29,16 @@
             Số điện thoại
             <input type="text" asp-for="SoDienThoai" class="input w-full mt-1" placeholder="Nhập số điện thoại">
             <span asp-validation-for="SoDienThoai" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Chức vụ - đơn vị
+            <textarea disabled asp-for="TenCVDV" class="textarea w-full mt-1" rows="1"></textarea>
+            <span asp-validation-for="TenCVDV" class="text-error text-sm"></span>
+        </label>
+        <label>
+            Trình độ - ngành
+            <textarea disabled asp-for="TenTDN" class="textarea w-full mt-1" rows="1"></textarea>
+            <span asp-validation-for="TenTDN" class="text-error text-sm"></span>
         </label>
         <div class="flex gap-3 justify-between items-center flex-wrap">
             <div asp-validation-summary="ModelOnly" class="text-error text-sm"></div>

@@ -21,9 +21,9 @@
                 <input type="hidden" asp-for="MaCBGV" />
                 <input type="hidden" asp-for="HoTen"/>
             } else {
-                <p>Cán bộ/giảng viên</p>
+                <p>Cán bộ, giảng viên</p>
                 <select asp-for="MaCBGV" asp-items="Model.DSCanBoGiangVien" class="select w-full mt-1">
-                    <option disabled selected>Chọn cán bộ/giảng viên</option>
+                    <option disabled selected>Chọn cán bộ, giảng viên</option>
                 </select>
                 <span asp-validation-for="MaCBGV" class="text-error text-sm"></span>
             }

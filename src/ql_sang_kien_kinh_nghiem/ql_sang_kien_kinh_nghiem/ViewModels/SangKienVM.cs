@@ -117,7 +117,7 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
             {
                 if (TrangThaiSK == "CHO_PHUC_KHAO")
                 {
-                    return NgayYeuCauPhucKhao?.AddDays(90);
+                    return NgayChapNhanPhucKhao?.AddDays(90);
                 }
 
                 return null;
@@ -174,6 +174,6 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
 
         public bool DaDanhGiaTrongHoiDongHienTai { get; set; }
 
-        public int DiemTimKhiem { get; set; }
+        public int DiemTimKiem { get; set; }
     }
 }

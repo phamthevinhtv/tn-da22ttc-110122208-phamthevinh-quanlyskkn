@@ -21,10 +21,20 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "BGD")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = await _appDbContext.DbSetCanBoGiangVien.CountAsync();
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+            
             var data = await _appDbContext.DbSetCanBoGiangVien
                 .OrderBy(x => x.HoTen)
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
                 .Select(x => new CanBoGiangVienVM
                 {
                     MaCBGV = x.MaCBGV,
@@ -47,6 +57,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 })
                 .ToListAsync();
 
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
+
             return View(data);
         }
 
@@ -64,7 +77,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (canBoGiangVien == null)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                    TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -214,7 +227,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                     await _appDbContext.SaveChangesAsync();
 
-                    TempData["Success"] = "Thêm cán bộ/giảng viên thành công";
+                    TempData["Success"] = "Thêm cán bộ, giảng viên thành công";
                     
                     return RedirectToAction(nameof(ChiTiet), new { ma = maCBGV });
                 }
@@ -225,7 +238,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                     if (canBoGiangVien == null)
                     {
-                        TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                        TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                         return RedirectToAction(nameof(Index));
                     }
 
@@ -235,7 +248,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                     await _appDbContext.SaveChangesAsync();
                 
-                    TempData["Success"] = "Cập nhật cán bộ/giảng viên thành công";
+                    TempData["Success"] = "Cập nhật cán bộ, giảng viên thành công";
 
                     return RedirectToAction(nameof(ChiTiet), new { ma = canBoGiangVienVM.MaCBGV });
                 }
@@ -261,7 +274,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (canBoGiangVien == null)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                    TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -280,7 +293,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (daSuDung)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên đã được sử dụng, không thể xóa";
+                    TempData["Error"] = "Cán bộ, giảng viên đã được sử dụng, không thể xóa";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -288,7 +301,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 await _appDbContext.SaveChangesAsync();
 
-                TempData["Success"] = "Xóa cán bộ/giảng viên thành công";
+                TempData["Success"] = "Xóa cán bộ, giảng viên thành công";
             }
             catch
             {
@@ -310,7 +323,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (!isCBGVExist)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                    TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -382,7 +395,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (!isCBGVExist)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                    TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                     return RedirectToAction(nameof(Index));
                 }
 

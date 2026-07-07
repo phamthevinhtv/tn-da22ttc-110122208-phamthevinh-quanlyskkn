@@ -57,6 +57,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     {
                         MaSK = x.MaSK,
                         TenSK = x.TenSK,
+                        MaCBGV = x.MaCBGV,
                         TrangThaiSK = x.TrangThaiSK,
                         NgayNop = x.NgayNop,
                         NgayYeuCauChinhSua = x.NgayYeuCauChinhSua,
@@ -102,10 +103,15 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     {
                         MaSK = x.MaSK,
                         TenSK = x.TenSK,
+                        MaCBGV = x.MaCBGV,
                         TrangThaiSK = x.TrangThaiSK,
                         NgayNop = x.NgayNop,
                         NgayYeuCauChinhSua = x.NgayYeuCauChinhSua,
                         NgayChapNhanDanhGia = x.NgayChapNhanDanhGia,
+                        NgayTraKetQuaDanhGia = x.NgayTraKetQuaDanhGia,
+                        NgayYeuCauPhucKhao = x.NgayYeuCauPhucKhao,
+                        NgayChapNhanPhucKhao = x.NgayChapNhanPhucKhao,
+                        NgayTraKetQuaPhucKhao = x.NgayTraKetQuaPhucKhao
                     })
                     .ToListAsync();
             }
@@ -145,10 +151,15 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     {
                         MaSK = x.MaSK,
                         TenSK = x.TenSK,
+                        MaCBGV = x.MaCBGV,
                         TrangThaiSK = x.TrangThaiSK,
                         NgayNop = x.NgayNop,
                         NgayYeuCauChinhSua = x.NgayYeuCauChinhSua,
                         NgayChapNhanDanhGia = x.NgayChapNhanDanhGia,
+                        NgayTraKetQuaDanhGia = x.NgayTraKetQuaDanhGia,
+                        NgayYeuCauPhucKhao = x.NgayYeuCauPhucKhao,
+                        NgayChapNhanPhucKhao = x.NgayChapNhanPhucKhao,
+                        NgayTraKetQuaPhucKhao = x.NgayTraKetQuaPhucKhao
                     })
                     .ToListAsync();
             }
@@ -163,10 +174,15 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     {
                         MaSK = x.MaSK,
                         TenSK = x.TenSK,
+                        MaCBGV = x.MaCBGV,
                         TrangThaiSK = x.TrangThaiSK,
                         NgayNop = x.NgayNop,
                         NgayYeuCauChinhSua = x.NgayYeuCauChinhSua,
                         NgayChapNhanDanhGia = x.NgayChapNhanDanhGia,
+                        NgayTraKetQuaDanhGia = x.NgayTraKetQuaDanhGia,
+                        NgayYeuCauPhucKhao = x.NgayYeuCauPhucKhao,
+                        NgayChapNhanPhucKhao = x.NgayChapNhanPhucKhao,
+                        NgayTraKetQuaPhucKhao = x.NgayTraKetQuaPhucKhao
                     })
                     .ToListAsync();
             }
@@ -186,10 +202,15 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     {
                         MaSK = x.MaSK,
                         TenSK = x.TenSK,
+                        MaCBGV = x.MaCBGV,
                         TrangThaiSK = x.TrangThaiSK,
                         NgayNop = x.NgayNop,
                         NgayYeuCauChinhSua = x.NgayYeuCauChinhSua,
                         NgayChapNhanDanhGia = x.NgayChapNhanDanhGia,
+                        NgayTraKetQuaDanhGia = x.NgayTraKetQuaDanhGia,
+                        NgayYeuCauPhucKhao = x.NgayYeuCauPhucKhao,
+                        NgayChapNhanPhucKhao = x.NgayChapNhanPhucKhao,
+                        NgayTraKetQuaPhucKhao = x.NgayTraKetQuaPhucKhao
                     })
                     .ToListAsync();
             }
@@ -300,6 +321,8 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     .FirstOrDefaultAsync(x => x.MaSK == ma && (x.DSCBGVSangKien.Any(s => s.MaCBGV == maCBGV) || 
                         x.TrangThaiSK == "CHO_DANH_GIA" ||
                         x.TrangThaiSK == "YEU_CAU_PHUC_KHAO" ||
+                        x.TrangThaiSK == "DA_CONG_NHAN" ||
+                        x.TrangThaiSK == "KHONG_CONG_NHAN" ||
                         x.TrangThaiSK == "CHO_PHUC_KHAO" ||
                         x.MaCBGV == maCBGV));
             }
@@ -315,19 +338,6 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     .Where(x => x.MaSK == ma)      
                     .Select(x => x.MaMH)
                     .ToListAsync();
-
-                var danhGiaCuaToi = await _appDbContext.DbSetDanhGia
-                    .Where(x => x.MaSK == ma && x.MaCBGV == maCBGV)
-                    .Select(x => new DanhGiaVM
-                    {
-                        MaSK = x.MaSK,
-                        MaCBGV = x.MaCBGV,
-                        MaHD = x.MaHD,
-                        YKienNhanXet = x.YKienNhanXet,
-                        CongNhan = x.CongNhan,
-                        NgayDG = x.NgayDG
-                    })
-                    .FirstOrDefaultAsync();
                 
                 sangKienVM.MaSK = sangKien.MaSK;
                 sangKienVM.MaCDT = sangKien.MaCDT;
@@ -348,7 +358,6 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 sangKienVM.TrangThaiSK = sangKien.TrangThaiSK;
                 sangKienVM.DSMaLV = dSMaLV;
                 sangKienVM.DSMaMH = dSMaMH;
-                sangKienVM.DanhGiaVM = danhGiaCuaToi ?? new DanhGiaVM();
 
                 if (!string.IsNullOrEmpty(sangKienVM.UrlTepSK))
                 {
@@ -470,8 +479,10 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (activeHoiDong != null && activeHoiDong.SoThanhVien > 0)
                 {
+                    var lanDGCanThiet = sangKien.TrangThaiSK == "CHO_PHUC_KHAO" ? 2 : 1;
+
                     var soDanhGiaHoiDong = await _appDbContext.DbSetDanhGia
-                        .Where(d => d.MaSK == ma && d.MaHD == activeHoiDong.MaHD)
+                        .Where(d => d.MaSK == ma && d.MaHD == activeHoiDong.MaHD && d.LanDG == lanDGCanThiet)
                         .Select(d => d.MaCBGV)
                         .Distinct()
                         .CountAsync();
@@ -494,7 +505,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                     var maCBGVHienTai = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("MaCBGV");
                     sangKienVM.DaDanhGiaTrongHoiDongHienTai = await _appDbContext.DbSetDanhGia
-                        .AnyAsync(d => d.MaSK == ma && d.MaHD == activeHoiDong.MaHD && d.MaCBGV == maCBGVHienTai);
+                        .AnyAsync(d => d.MaSK == ma && d.MaHD == activeHoiDong.MaHD && d.MaCBGV == maCBGVHienTai && d.LanDG == lanDGCanThiet);
                 }
 
                 sangKienVM.DSCanBoGiangVienSK = dSCBGV;
@@ -505,11 +516,27 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "CBGV, BGD, DVTT, ADMIN")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
-            var dsSangKien = await LayDSSangKienTheoQuyen();
+            var tatCaSangKien = await LayDSSangKienTheoQuyen();
 
-            return View(dsSangKien);
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = tatCaSangKien.Count;
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+
+            var dsSangKienTheoTrang = tatCaSangKien
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
+                .ToList();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
+
+            return View(dsSangKienTheoTrang);
         }
 
         [Authorize(Roles = "CBGV, BGD, DVTT, ADMIN")]
@@ -800,6 +827,17 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     };
 
                     _appDbContext.DbSetSangKien.Add(sangKien);
+
+                    await _appDbContext.SaveChangesAsync();
+
+                    var  cbgvSangKien = new CBGVSangKien
+                    {
+                        MaCBGV = maCBGV,
+                        MaSK = sangKien.MaSK,
+                        TiLeDongGop = 100
+                    };
+
+                    _appDbContext.DbSetCBGVSangKien.Add(cbgvSangKien);
 
                     await _appDbContext.SaveChangesAsync();
 
@@ -1140,6 +1178,8 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 sangKien.TrangThaiSK = "YEU_CAU_PHUC_KHAO";
 
+                sangKien.NgayYeuCauPhucKhao = DateTime.Now;
+
                 await _appDbContext.SaveChangesAsync();
 
                 TempData["Success"] = "Gửi yêu cầu phúc khảo sáng kiến thành công";
@@ -1181,6 +1221,8 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 }
 
                 sangKien.TrangThaiSK = "CHO_PHUC_KHAO";
+
+                sangKien.NgayChapNhanPhucKhao = DateTime.Now;
 
                 await _appDbContext.SaveChangesAsync();
 
@@ -1270,7 +1312,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 if (!isCBGVExist)
                 {
-                    TempData["Error"] = "Cán bộ/giảng viên không tồn tại";
+                    TempData["Error"] = "Cán bộ, giảng viên không tồn tại";
                     return RedirectToAction(nameof(ChiTiet), new { ma = cBGVSangKienVM.MaSK });
                 }
 
@@ -1761,7 +1803,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
         [Authorize(Roles = "DVTT, BGD")]
         public async Task<IActionResult> TimKiem(string tukhoa)
         {
-            var danhSachCumTu = _xuLyVanBanService.TaoDanhSachCumTuTimKiem(tukhoa);
+            var danhSachCumTu = _xuLyVanBanService.TaoDanhSachCumTuTimKiem(tukhoa.Trim());
 
             if (danhSachCumTu == null || !danhSachCumTu.Any())
             {
@@ -1888,9 +1930,10 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     })
                 })
                 .Where(x => x.DiemMonHoc > 0 || x.DiemLinhVuc > 0 || x.DiemSangKien > 0)
-                .OrderByDescending(x => x.DiemMonHoc)
-                .ThenByDescending(x => x.DiemLinhVuc)
+                .OrderByDescending(x => x.DiemMonHoc + x.DiemLinhVuc + x.DiemSangKien)
                 .ThenByDescending(x => x.DiemSangKien)
+                .ThenByDescending(x => x.DiemLinhVuc)
+                .ThenByDescending(x => x.DiemMonHoc)
                 .Take(5)
                 .ToList();
 
@@ -1906,9 +1949,11 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     TenSK = x.SangKien.TenSK,
                     NgayNop = x.SangKien.NgayNop,
                     TrangThaiSK = x.SangKien.TrangThaiSK,
-                    DiemTimKhiem = x.DiemMonHoc + x.DiemLinhVuc + x.DiemSangKien
+                    DiemTimKiem = x.DiemMonHoc + x.DiemLinhVuc + x.DiemSangKien
                 })
                 .ToList();
+
+            ViewData["TuKhoa"] = tukhoa.Trim();
 
             return View(nameof(Index), kq);
         }
@@ -1945,14 +1990,41 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 var maCBGV = User.FindFirstValue("MaCBGV");
 
-                var lanDGMoiNhat = await _appDbContext.DbSetDanhGia
-                    .Where(dg => dg.MaSK == danhGiaVM.MaSK && dg.MaHD == activeHoiDong.MaHD)
-                    .OrderByDescending(dg => dg.NgayDG)
+                if (string.IsNullOrEmpty(maCBGV))
+                {
+                    TempData["Error"] = "Không xác định được cán bộ giảng viên hiện tại";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var danhGiaCuaToi = await _appDbContext.DbSetDanhGia
+                    .Where(dg => dg.MaSK == danhGiaVM.MaSK && dg.MaHD == activeHoiDong.MaHD && dg.MaCBGV == maCBGV)
+                    .OrderByDescending(dg => dg.LanDG)
                     .FirstOrDefaultAsync();
 
-                if (lanDGMoiNhat != null && lanDGMoiNhat.LanDG >= 2) 
+                int lanDG;
+                if (sangKien.TrangThaiSK == "CHO_DANH_GIA")
                 {
-                    TempData["Error"] = "Sáng kiến này đã được đánh giá 2 lần, không thể đánh giá thêm";
+                    if (danhGiaCuaToi != null)
+                    {
+                        TempData["Error"] = "Bạn đã đánh giá sáng kiến này trong đợt đánh giá hiện tại";
+                        return RedirectToAction(nameof(ChiTiet), new { ma = danhGiaVM.MaSK });
+                    }
+
+                    lanDG = 1;
+                }
+                else if (sangKien.TrangThaiSK == "CHO_PHUC_KHAO")
+                {
+                    if (danhGiaCuaToi == null || danhGiaCuaToi.LanDG != 1)
+                    {
+                        TempData["Error"] = "Sáng kiến chưa có đánh giá lần 1 nên không thể đánh giá lần 2";
+                        return RedirectToAction(nameof(ChiTiet), new { ma = danhGiaVM.MaSK });
+                    }
+
+                    lanDG = 2;
+                }
+                else
+                {
+                    TempData["Error"] = "Sáng kiến hiện không trong giai đoạn đánh giá hoặc phúc khảo";
                     return RedirectToAction(nameof(ChiTiet), new { ma = danhGiaVM.MaSK });
                 }
 
@@ -1960,9 +2032,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 {
                     MaSK = danhGiaVM.MaSK,
                     MaHD = activeHoiDong.MaHD,
-                    MaCBGV = maCBGV!,
+                    MaCBGV = maCBGV,
                     NgayDG = DateTime.Now,
-                    LanDG = lanDGMoiNhat == null ? 1 : lanDGMoiNhat.LanDG + 1,
+                    LanDG = lanDG,
                     YKienNhanXet = danhGiaVM.YKienNhanXet,
                     CongNhan = danhGiaVM.CongNhan,
                 };
@@ -2019,6 +2091,14 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                     return RedirectToAction(nameof(ChiTiet), new { ma = MaSK });
                 }
 
+                if(sangKien.TrangThaiSK == "CHO_DANH_GIA")
+                {
+                    sangKien.NgayTraKetQuaDanhGia = DateTime.Now;
+                } else if(sangKien.TrangThaiSK == "CHO_PHUC_KHAO")
+                {
+                    sangKien.NgayTraKetQuaPhucKhao = DateTime.Now;
+                }
+
                 if (CongNhan == 1)
                 {
                     sangKien.TrangThaiSK = "DA_CONG_NHAN";
@@ -2027,6 +2107,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                 {
                     sangKien.TrangThaiSK = "KHONG_CONG_NHAN";
                 }
+
 
                 await _appDbContext.SaveChangesAsync();
 

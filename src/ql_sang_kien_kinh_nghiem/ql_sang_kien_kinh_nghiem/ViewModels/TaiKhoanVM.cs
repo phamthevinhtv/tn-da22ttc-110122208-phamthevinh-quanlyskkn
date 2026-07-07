@@ -7,7 +7,7 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
     {
         public int MaTK { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn cán bộ/giảng viên")]
+        [Required(ErrorMessage = "Vui lòng chọn cán bộ, giảng viên")]
         public string? MaCBGV { get; set; }
 
         public string TenDangNhap { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
         public string TenQuyen => Quyen switch
         {
             "ADMIN" => "Quản trị viên",
-            "CBGV" => "Cán bộ/Giảng viên",
+            "CBGV" => "Cán bộ, giảng viên",
             "BGD" => "Ban giám đốc",
             "DVTT" => "Đơn vị trực thuộc",
             _ => string.Empty

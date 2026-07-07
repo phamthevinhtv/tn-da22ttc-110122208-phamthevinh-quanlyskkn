@@ -2,89 +2,131 @@
 
 @{
     ViewData["Title"] = "Quản lý môn học";
-    int sttmh = 1;
+    int trangHienTai = ViewBag.TrangHienTai ?? 1;
+    int tongSoTrang = ViewBag.TongSoTrang ?? 1;
+    int sttmh = ViewBag.SttBatDau ?? 1;
 }
 
 <div class="p-3 pb-0">
     <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
         <h2 class="text-lg font-medium">Danh sách môn học</h2>
-        <a asp-action="ChiTiet" asp-controller="MonHoc" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm môn học</a>
+        <div class="flex gap-3 items-center grow justify-end">
+            <label class="input h-8 text-xs w-full md:max-w-70 pr-[8px]">
+                <input type="text" id="timKiemMonHoc" class="grow" placeholder="Tìm theo tên ngành, tên môn học">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7" class="cursor-pointer" id="xoaTimKiemMonHoc">
+                    <path d="M257.85-231.38 232-257.85 453.54-480 232-702.15l25.85-26.47L480-506.46l222.15-222.16L728-702.15 506.46-480 728-257.85l-25.85 26.47L480-453.54 257.85-231.38Z"/>
+                </svg>
+            </label>
+            <a asp-action="ChiTiet" asp-controller="MonHoc" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm môn học</a>
+        </div>
     </div>
     
     @if(Model != null && Model.Count > 0) {
         @foreach (var nganh in Model)
         {
-            <h3 class="text-base mb-3">Ngành @nganh.TenNganh</h3>
-            <div class="overflow-x-auto rounded-box border border-base-300 mb-3">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="p-2 text-base-content w-20">STT</th>
-                            <th class="p-2 text-base-content">Tên môn</th>
-                            <th class="p-2 text-base-content w-20">Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if(nganh.DSMonHoc != null && nganh.DSMonHoc.Count > 0) {
-                            @foreach (var mon in nganh.DSMonHoc)
-                            {
-                                <tr class="align-top">
-                                    <td class="p-2">
-                                        @sttmh
-                                    </td>
-                                    <td class="p-2">
-                                        @mon.TenMH
-                                    </td>
-                                    <td class="p-2">
-                                        <div class="flex items-center gap-2">
-                                            <a asp-action="ChiTiet" asp-controller="MonHoc" asp-route-ma="@mon.MaMH" class="tooltip tooltip-left" data-tip="Xem chi tiết môn học">
-                                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
-                                                    <path d="M226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.68-17.8h220.36v36.92h-220.3q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-220.3h36.92v220.36q0 25.88-17.8 43.68t-43.55 17.8H226.89Zm163.76-198.77-26.34-26.34 367.27-366.89h-176.5v-36.92h239.38v239.38h-36.92v-176.5L390.65-364.31Z"/>
-                                                </svg>
-                                            </a>
-                                            @if(!@mon.DaSuDung) {
-                                                <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').showModal()" data-tip="Xóa môn học">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-error)">
-                                                        <path d="m336-310.81 144-144 144 144L649.58-336l-144-144 144-144L624-649.58l-144 144-144-144L310.81-624l144 144-144 144L336-310.81ZM226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.55-17.8h506.22q25.75 0 43.55 17.8 17.8 17.8 17.8 43.55v506.22q0 25.75-17.8 43.55-17.8 17.8-43.55 17.8H226.89Zm.19-36.92h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-505.84q0-9.23-7.69-16.93-7.7-7.69-16.93-7.69H227.08q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69Zm-24.62-555.08V-202.46-757.54Z"/>
+            <div class="khoi-nganh" data-ten-nganh="@nganh.TenNganh?.ToLower()">
+                <h3 class="text-base mb-3">Ngành @nganh.TenNganh</h3>
+                <div class="overflow-x-auto rounded-box border border-base-300 mb-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="p-2 text-base-content w-20">STT</th>
+                                <th class="p-2 text-base-content">Tên môn</th>
+                                <th class="p-2 text-base-content w-20">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bodyBangMonHoc">
+                            @if(nganh.DSMonHoc != null && nganh.DSMonHoc.Count > 0) {
+                                @foreach (var mon in nganh.DSMonHoc)
+                                {
+                                    <tr class="align-top dongMonHoc">
+                                        <td class="p-2">
+                                            @sttmh
+                                        </td>
+                                        <td class="p-2">
+                                            @mon.TenMH
+                                        </td>
+                                        <td class="p-2">
+                                            <div class="flex items-center gap-2">
+                                                <a asp-action="ChiTiet" asp-controller="MonHoc" asp-route-ma="@mon.MaMH" class="tooltip tooltip-left" data-tip="Xem chi tiết môn học">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-base-content)">
+                                                        <path d="M226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.68-17.8h220.36v36.92h-220.3q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-220.3h36.92v220.36q0 25.88-17.8 43.68t-43.55 17.8H226.89Zm163.76-198.77-26.34-26.34 367.27-366.89h-176.5v-36.92h239.38v239.38h-36.92v-176.5L390.65-364.31Z"/>
                                                     </svg>
-                                                </button>
-                                            }
+                                                </a>
+                                                @if(!@mon.DaSuDung) {
+                                                    <button class="btn-ghost flex cursor-pointer tooltip tooltip-left" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').showModal()" data-tip="Xóa môn học">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--color-error)">
+                                                            <path d="m336-310.81 144-144 144 144L649.58-336l-144-144 144-144L624-649.58l-144 144-144-144L310.81-624l144 144-144 144L336-310.81ZM226.89-165.54q-25.75 0-43.55-17.8-17.8-17.8-17.8-43.55v-506.22q0-25.75 17.8-43.55 17.8-17.8 43.55-17.8h506.22q25.75 0 43.55 17.8 17.8 17.8 17.8 43.55v506.22q0 25.75-17.8 43.55-17.8 17.8-43.55 17.8H226.89Zm.19-36.92h505.84q9.23 0 16.93-7.69 7.69-7.7 7.69-16.93v-505.84q0-9.23-7.69-16.93-7.7-7.69-16.93-7.69H227.08q-9.23 0-16.93 7.69-7.69 7.7-7.69 16.93v505.84q0 9.23 7.69 16.93 7.7 7.69 16.93 7.69Zm-24.62-555.08V-202.46-757.54Z"/>
+                                                        </svg>
+                                                    </button>
+                                                }
 
-                                            <dialog id="xoa_mon_hoc_modal_@mon.MaMH" class="modal">
-                                                <div class="modal-box p-3">
-                                                    <h3 class="text-lg">
-                                                        Xác nhận
-                                                    </h3>
-                                                    <p class="text-base mb-3 mt-2">
-                                                        Bạn có chắc chắn muốn xóa môn học "@mon.TenMH" không?
-                                                    </p>
-                                                    <form method="post" asp-action="Xoa" asp-controller="MonHoc" class="flex flex-col gap-3">
-                                                        <input type="hidden" name="ma" value="@mon.MaMH">
-                                                        <div class="modal-action mt-0 gap-3 ml-auto">
-                                                            <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').close()">Thoát</button>
-                                                            <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xóa</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </dialog>
-                                        </div>
+                                                <dialog id="xoa_mon_hoc_modal_@mon.MaMH" class="modal">
+                                                    <div class="modal-box p-3">
+                                                        <h3 class="text-lg">
+                                                            Xác nhận
+                                                        </h3>
+                                                        <p class="text-base mb-3 mt-2">
+                                                            Bạn có chắc chắn muốn xóa môn học "@mon.TenMH" không?
+                                                        </p>
+                                                        <form method="post" asp-action="Xoa" asp-controller="MonHoc" class="flex flex-col gap-3">
+                                                            <input type="hidden" name="ma" value="@mon.MaMH">
+                                                            <div class="modal-action mt-0 gap-3 ml-auto">
+                                                                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('xoa_mon_hoc_modal_@mon.MaMH').close()">Thoát</button>
+                                                                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Xóa</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </dialog>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    sttmh++;
+                                }
+                                <tr class="khongCoKetQua" style="display:none;">
+                                    <td colspan="3" class="p-2 text-center">
+                                        Không tìm thấy môn học phù hợp
                                     </td>
                                 </tr>
-
-                                sttmh++;
+                            } else {
+                                <tr>
+                                    <td colspan="3" class="p-2 text-center">Danh sách rỗng</td>
+                                </tr>
                             }
-                        } else {
-                            <tr>
-                                <td colspan="3" class="p-2 text-center">Danh sách rỗng</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            sttmh = 1;
         }
     } else {
         <p>Danh sách rỗng</p>
+    }
+
+    @if (tongSoTrang > 1)
+    {
+        <div class="flex justify-center mt-3 mb-3">
+            <div class="join">
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai - 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == 1 ? "btn-disabled" : "")">
+                    &#10094;
+                </a>
+                @for (int i = 1; i <= tongSoTrang; i++)
+                {
+                    <a asp-action="Index" 
+                       asp-route-trang="@i" 
+                       class="join-item btn btn-sm @(trangHienTai == i ? "btn-active btn-primary text-base-100" : "")">
+                        @i
+                    </a>
+                }
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai + 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == tongSoTrang ? "btn-disabled" : "")">
+                    &#10095;
+                </a>
+            </div>
+        </div>
     }
 </div>
 
@@ -107,7 +149,76 @@
 }
 
 <script>
-    setTimeout(() => {
-        document.getElementById('toast')?.remove();
-    }, 3000);
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+            document.getElementById('toast')?.remove();
+        }, 3000);
+
+        //
+        const inputTKMH = document.getElementById("timKiemMonHoc");
+
+        const timKiemMonHoc = () => {
+            const dsKhoiNganh = document.querySelectorAll(".khoi-nganh");
+
+            inputTKMH.addEventListener("input", function () {
+                const keyword = this.value.trim().toLowerCase();
+
+                dsKhoiNganh.forEach(khoi => {
+
+                    const tenNganh = khoi.dataset.tenNganh;
+                    const rows = khoi.querySelectorAll(".dongMonHoc");
+                    const emptyRow = khoi.querySelector(".khongCoKetQua");
+                    let count = 0;
+
+                    if (tenNganh.includes(keyword)) {
+
+                        rows.forEach(row => {
+                            row.style.display = "";
+                            count++;
+                        });
+
+                    }
+                    else {
+                        rows.forEach(row => {
+                            const tenMon = row.cells[1].textContent
+                                .trim()
+                                .toLowerCase();
+
+                            if (tenMon.includes(keyword)) {
+
+                                row.style.display = "";
+                                count++;
+
+                            } else {
+
+                                row.style.display = "none";
+
+                            }
+                        });
+                    }
+
+                    if (count == 0) {
+                        khoi.style.display = "none";
+
+                        if (emptyRow)
+                            emptyRow.style.display = "";
+                    } else {
+                        khoi.style.display = "";
+
+                        if (emptyRow)
+                            emptyRow.style.display = "none";
+                    }
+                });
+            });
+        }
+
+        timKiemMonHoc();
+
+        const xoaTimKiemMonHoc = document.getElementById("xoaTimKiemMonHoc");
+        
+        xoaTimKiemMonHoc.addEventListener("click", () => {
+            inputTKMH.value = "";
+            inputTKMH.dispatchEvent(new Event("input"));
+        });
+    });
 </script>

@@ -7,6 +7,8 @@
 
     string? quyen = User.FindFirst(ClaimTypes.Role)?.Value;
     string? tenVaiTroHD = User.FindFirst("TenVaiTroHD")?.Value;
+
+    string tukhoa = ViewData["TuKhoa"] as string ?? "";
 }
 
 <!DOCTYPE html>
@@ -34,7 +36,14 @@
             @if(quyen == "BGD" || quyen == "DVTT" || quyen == "CBGV") {
                 <form asp-action="TimKiem" asp-controller="SangKien" method="get" class="w-full max-w-full md:max-w-96 order-3 md:order-2">
                     <div class="join w-full">
-                        <input type="text" required name="tukhoa" class="input input-primary join-item focus:outline-none w-full" placeholder="Nhập từ khóa liên quan đến sáng kiến cần tìm">
+                        <label class="input input-primary join-item w-full pr-[8px]">
+                            <input type="text" required name="tukhoa" class="grow" placeholder="Tìm theo từ khóa" value="@tukhoa">
+                            <a asp-action="Index" asp-controller="SangKien" class="cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7">
+                                    <path d="M257.85-231.38 232-257.85 453.54-480 232-702.15l25.85-26.47L480-506.46l222.15-222.16L728-702.15 506.46-480 728-257.85l-25.85 26.47L480-453.54 257.85-231.38Z"/>
+                                </svg>
+                            </a>
+                        </label>
                         <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none join-item">Tìm</button>
                     </div>
                 </form>
@@ -53,7 +62,7 @@
                                     @:Cấp đơn vị trực thuộc
                                     break;
                                 case "CBGV":
-                                    @:Cấp cán bộ/giảng viên
+                                    @:Cấp cán bộ, giảng viên
                                     break;
                                 case "ADMIN":
                                     @:Cấp quản trị tài khoản
@@ -97,8 +106,20 @@
                 <main class="grow">
                     @RenderBody()
                 </main>
-                <footer class="border-t border-base-300 p-2">
-                    <p class="text-center text-xs">&copy; 2026 Trường Đại học A</p>
+                <footer class="border-t border-base-300">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 grow">
+                            <h2 class="text-base font-medium mb-2">Hệ thống quản lý sáng kiến kinh nghiệm</h2>
+                            <p class="text-sm text-base-content/70">Phiên bản 1.0</p>
+                            <p class="text-sm text-base-content/70">Phát triển bởi Ban Công nghệ thông tin - ABCU</p>
+                        </div>
+                        <div class="p-3 grow">
+                            <h2 class="text-base font-medium mb-2">Liên hệ hỗ trợ</h2>
+                            <p class="text-sm text-base-content/70">Email: bcntt@abcu.edu.vn</p>
+                            <p class="text-sm text-base-content/70">Số điện thoại: (+84) 123.456.790</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs border-t border-base-300 p-2 text-base-content/70">&copy; Bản quyền thuộc ABCU</p>
                 </footer>
             </div>
         </div>

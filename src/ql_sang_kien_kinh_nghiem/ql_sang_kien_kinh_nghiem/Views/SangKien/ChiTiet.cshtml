@@ -240,16 +240,13 @@
                 }
                 <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('chap_nhan_sang_kien_modal').showModal()">Chấp nhận</button>
             }
-            @if(Model.TrangThaiSK == "KHONG_CONG_NHAN" && (maCBGVHienTai == Model.MaCBGV || Model.DSCanBoGiangVienSK == null || !Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
+            @if(Model.TrangThaiSK == "KHONG_CONG_NHAN" && (maCBGVHienTai == Model.MaCBGV || Model.DSCanBoGiangVienSK == null || Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
                 <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('yeu_cau_phuc_khao_sang_kien_modal').showModal()">Yêu cầu phúc khảo</button>
             }
             @if(Model.TrangThaiSK == "YEU_CAU_PHUC_KHAO" && quyenHienTai == "BGD" && maCBGVHienTai != Model.MaCBGV && (Model.DSCanBoGiangVienSK != null && !Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
                 <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('chap_nhan_phuc_khao_sang_kien_modal').showModal()">Chấp nhận phúc khảo</button>
             }
-            @if((quyenHienTai == "BGD" || quyenHienTai == "DVTT") && maCBGVHienTai != Model.MaCBGV && (Model.DSCanBoGiangVienSK != null && !Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
-                <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('gui_phan_hoi_sang_kien_modal').showModal()">Phản hồi</button>
-            }
-            @if(maVaiTroHD > 0 && (Model.TrangThaiSK == "CHO_DANH_GIA" ? !Model.DaDanhGiaTrongHoiDongHienTai : Model.TrangThaiSK == "CHO_PHUC_KHAO") && maCBGVHienTai != Model.MaCBGV && (Model.DSCanBoGiangVienSK != null && !Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
+            @if(maVaiTroHD > 0 && (Model.TrangThaiSK == "CHO_DANH_GIA" || Model.TrangThaiSK == "CHO_PHUC_KHAO") && !Model.DaDanhGiaTrongHoiDongHienTai && maCBGVHienTai != Model.MaCBGV && (Model.DSCanBoGiangVienSK != null && !Model.DSCanBoGiangVienSK.Any(c => c.MaCBGV == maCBGVHienTai))) {
                 <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('danh_gia_sang_kien_modal').showModal()">Đánh giá</button>
             }
         </div>
@@ -257,11 +254,11 @@
 
     @if(Model.DSPhanHoi != null && Model.DSPhanHoi.Count > 0) {
         <div class="border border-base-300 p-3 rounded-box mt-3">
-            <h3 class="text-base mb-3">Phản hồi</h3>
+            <h3 class="text-base font-medium mb-3">Phản hồi</h3>
             <div class="flex flex-col gap-3">
                 @foreach(var phanHoi in Model.DSPhanHoi) {
                     <div class="border border-base-300 p-3 rounded-box">
-                        <p class="font-medium">@(phanHoi.MaCBGV == maCBGVHienTai ? "Bạn" : phanHoi.TenCBGV + " (" + phanHoi.TenDV + ")")</p>
+                        <p class="font-medium">@(phanHoi.MaCBGV == maCBGVHienTai ? "Bạn" : phanHoi.MaCBGV == Model.MaCBGV ? phanHoi.TenCBGV + " (" + phanHoi.TenDV + ") - Tác giả" : phanHoi.TenCBGV + " (" + phanHoi.TenDV + ")")</p>
                         <p>↳ @phanHoi.NoiDung</p>
                         <p class="text-xs text-base-content/70">@(phanHoi.NgayGui.ToString("HH:mm - dd/MM/yyyy"))</p>
                     </div>
@@ -270,9 +267,9 @@
         </div>
     }
 
-    @if ((maVaiTroHD == 1 || maVaiTroHD == 2 || maVaiTroHD == 4)) {
+    @if (maVaiTroHD == 1 || maVaiTroHD == 2 || maVaiTroHD == 3 || maVaiTroHD == 4 || quyenHienTai == "BGD") {
         <div class="border border-base-300 p-3 rounded-box mt-3">
-            <h3 class="text-base mb-3">Danh sách đánh giá</h3>
+            <h3 class="text-base mb-3 font-medium">Danh sách đánh giá</h3>
             <div class="overflow-x-auto rounded-box border border-base-300">
                 <table class="table">
                     <thead>
@@ -289,6 +286,11 @@
                         @{ var sttDanhGia = 1; }
                         @if(Model.DSDanhGia != null && Model.DSDanhGia.Count > 0) {
                             @foreach(var danhGia in Model.DSDanhGia) {
+                                if(maVaiTroHD == 3) {
+                                    if(danhGia.MaCBGV != maCBGVHienTai) {
+                                        continue;
+                                    }
+                                }
                                 <tr class="align-top">
                                     <td class="p-2">@sttDanhGia</td>
                                     <td class="p-2">@danhGia.TenCBGV</td>
@@ -301,14 +303,14 @@
                             }
                         } else {
                             <tr>
-                                <td colspan="5" class="p-2 text-center">Danh sách rỗng</td>
+                                <td colspan="6" class="p-2 text-center">Danh sách rỗng</td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
 
-            @if (maVaiTroHD == 1 && Model.TatCaHoiDongDaDanhGia && Model.TrangThaiSK != "DA_CONG_NHAN" && Model.TrangThaiSK != "KHONG_CONG_NHAN")
+            @if (maVaiTroHD == 1 && Model.TatCaHoiDongDaDanhGia && (Model.TrangThaiSK == "CHO_DANH_GIA" || Model.TrangThaiSK == "CHO_PHUC_KHAO") && Model.DSDanhGia?.Count > 0)
             {
                 <div class="flex gap-3 justify-end items-center flex-wrap mt-3">
                     <button type="button" class="btn btn-outline btn-primary hover:text-base-100 font-normal shadow-none" onclick="document.getElementById('quyet_dinh_sang_kien_modal').showModal()">Quyết định</button>
@@ -458,26 +460,6 @@
             <div class="modal-action mt-0 gap-3 ml-auto">
                 <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('chap_nhan_phuc_khao_sang_kien_modal').close()">Thoát</button>
                 <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Chấp nhận</button>
-            </div>
-        </form>
-    </div>
-</dialog>
-
-<dialog id="gui_phan_hoi_sang_kien_modal" class="modal">
-    <div class="modal-box p-3">
-        <h3 class="text-lg font-medium mb-3">
-            Phản hồi về sáng kiến "@Model.TenSK"
-        </h3>
-        <form method="post" asp-action="PhanHoi" asp-controller="SangKien" class="flex flex-col gap-3">
-            <input type="hidden" asp-for="PhanHoiVM.MaSK" value="@Model.MaSK">
-            <label>
-                Nội dung phản hồi
-                <textarea asp-for="PhanHoiVM.NoiDung" class="textarea w-full mt-1" rows="4" placeholder="Nhập nội dung phản hồi"></textarea>
-                <span asp-validation-for="PhanHoiVM.NoiDung" class="text-error text-sm"></span>
-            </label>
-            <div class="modal-action mt-0 gap-3 ml-auto">
-                <button type="button" class="btn btn-soft font-normal shadow-none" onclick="document.getElementById('gui_phan_hoi_sang_kien_modal').close()">Thoát</button>
-                <button type="submit" class="btn btn-primary text-base-100 font-normal shadow-none">Gửi</button>
             </div>
         </form>
     </div>

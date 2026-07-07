@@ -20,10 +20,20 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "BGD")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = await _appDbContext.DbSetVaiTro.CountAsync();
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+            
             var data = await _appDbContext.DbSetVaiTro
                 .OrderBy(x => x.TenVT)
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
                 .Select(x => new VaiTroVM
                 {
                     MaVT = x.MaVT,
@@ -33,6 +43,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                         .Any(y => y.MaVT == x.MaVT)
                 })
                 .ToListAsync();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
 
             return View(data);
         }

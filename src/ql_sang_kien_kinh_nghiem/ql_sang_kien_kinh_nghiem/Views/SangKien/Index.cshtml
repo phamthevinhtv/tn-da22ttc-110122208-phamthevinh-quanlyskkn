@@ -2,16 +2,31 @@
 @model List<SangKienVM>
 
 @{
-    ViewData["Title"] = "Sáng kiến";
-    int sttsk = 1;
+    string tukhoa = ViewData["TuKhoa"] as string ?? "";
+
+    ViewData["Title"] = string.IsNullOrEmpty(tukhoa) ? "Sáng kiến" : $"Kết quả tìm kiếm sáng kiến";
+
     var quyenHienTai = User.FindFirst(ClaimTypes.Role)?.Value;
-    var maCBGVHienTai = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var maCBGVHienTai = User.FindFirst("MaCBGV")?.Value;
+
+    int trangHienTai = ViewBag.TrangHienTai ?? 1;
+    int tongSoTrang = ViewBag.TongSoTrang ?? 1;
+    int soDongTrenTrang = 15;
+    int sttsk = (trangHienTai - 1) * soDongTrenTrang + 1;
 }
 
 <div class="p-3">
     <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
-        <h2 class="text-lg font-medium">Danh sách sáng kiến</h2>
-        <a asp-action="ChiTiet" asp-controller="SangKien" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm sáng kiến</a>
+        <h2 class="text-lg font-medium">@(string.IsNullOrEmpty(tukhoa) ? "Danh sách sáng kiến" : $"Kết quả tìm kiếm sáng kiến liên quan nhất")</h2>
+        <div class="flex gap-3 items-center grow justify-end">
+            <label class="input h-8 text-xs w-full md:max-w-70 pr-[8px]">
+                <input type="text" id="timKiemSangKien" class="grow" placeholder="Tìm theo tên sáng kiến">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7" class="cursor-pointer" id="xoaTimKiemSangKien">
+                    <path d="M257.85-231.38 232-257.85 453.54-480 232-702.15l25.85-26.47L480-506.46l222.15-222.16L728-702.15 506.46-480 728-257.85l-25.85 26.47L480-453.54 257.85-231.38Z"/>
+                </svg>
+            </label>
+            <a asp-action="ChiTiet" asp-controller="SangKien" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm sáng kiến</a>
+        </div>
     </div>
 
     <div class="overflow-x-auto rounded-box border border-base-300">
@@ -22,11 +37,10 @@
                     <th class="p-2 text-base-content">Tên sáng kiến</th>
                     <th class="p-2 text-base-content w-40">Ngày nộp</th>
                     <th class="p-2 text-base-content w-40">Trạng thái</th>
-                    <th class="p-2 text-base-content w-40">Thời hạn</th>
                     <th class="p-2 text-base-content w-20">Hành động</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyBangSangKien">
                 @if(Model != null && Model.Count > 0) {
                     @foreach (var sangKien in Model)
                     {
@@ -35,38 +49,43 @@
                                 @sttsk
                             </td>
                             <td class="p-2">
-                                @sangKien.TenSK 
+                                @sangKien.TenSK
                             </td>
                             <td class="p-2">
                                 @(sangKien.TrangThaiSK == "NHAP" ? "-" : sangKien.NgayNop.ToString("dd/MM/yyyy"))
                             </td>
                             <td class="p-2">
                                 @sangKien.TenTrangThai
-                            </td>
-                            <td class="p-2">
                                 @if(!string.IsNullOrEmpty(sangKien.HanXetDuyet?.ToString())) {
                                     <p @(sangKien.HanXetDuyet.HasValue && sangKien.HanXetDuyet.Value <= DateTime.Now ? "text-error" : sangKien.HanXetDuyet.HasValue && sangKien.HanXetDuyet.Value <= DateTime.Now.AddDays(7) ? "text-warning" : "")">
-                                        @sangKien.HanXetDuyet?.ToString("dd/MM/yyyy")
+                                        thời hạn: @sangKien.HanXetDuyet?.ToString("dd/MM/yyyy")
                                     </p>
                                 } else if(!string.IsNullOrEmpty(sangKien.HanChinhSua?.ToString())) {
                                     <p @(sangKien.HanChinhSua.HasValue && sangKien.HanChinhSua.Value <= DateTime.Now ? "text-error" : sangKien.HanChinhSua.HasValue && sangKien.HanChinhSua.Value <= DateTime.Now.AddDays(7) ? "text-warning" : "")">
-                                        @sangKien.HanChinhSua?.ToString("dd/MM/yyyy")
+                                        thời hạn: @sangKien.HanChinhSua?.ToString("dd/MM/yyyy")
                                     </p>
                                 } else if(!string.IsNullOrEmpty(sangKien.HanDanhGia?.ToString())) {
                                     <p @(sangKien.HanDanhGia.HasValue && sangKien.HanDanhGia.Value <= DateTime.Now ? "text-error" : sangKien.HanDanhGia.HasValue && sangKien.HanDanhGia.Value <= DateTime.Now.AddDays(7) ? "text-warning" : "")">
-                                        @sangKien.HanDanhGia?.ToString("dd/MM/yyyy")
+                                        thời hạn: @sangKien.HanDanhGia?.ToString("dd/MM/yyyy")
                                     </p>
                                 } else if(!string.IsNullOrEmpty(sangKien.HanGiaiQuyetPhucKhao?.ToString())) {
                                     <p @(sangKien.HanGiaiQuyetPhucKhao.HasValue && sangKien.HanGiaiQuyetPhucKhao.Value <= DateTime.Now ? "text-error" : sangKien.HanGiaiQuyetPhucKhao.HasValue && sangKien.HanGiaiQuyetPhucKhao.Value <= DateTime.Now.AddDays(7) ? "text-warning" : "")">
-                                        @sangKien.HanGiaiQuyetPhucKhao?.ToString("dd/MM/yyyy")
+                                        thời hạn: @sangKien.HanGiaiQuyetPhucKhao?.ToString("dd/MM/yyyy")
                                     </p>
                                 } else if(!string.IsNullOrEmpty(sangKien.HanPhucKhao?.ToString())) {
                                     <p @(sangKien.HanPhucKhao.HasValue && sangKien.HanPhucKhao.Value <= DateTime.Now ? "text-error" : sangKien.HanPhucKhao.HasValue && sangKien.HanPhucKhao.Value <= DateTime.Now.AddDays(7) ? "text-warning" : "")">
-                                        @sangKien.HanPhucKhao?.ToString("dd/MM/yyyy")
+                                        thời hạn: @sangKien.HanPhucKhao?.ToString("dd/MM/yyyy")
                                     </p>
-                                } else {
-                                    <p>-</p>
+                                } else if(!string.IsNullOrEmpty(sangKien.NgayTraKetQuaDanhGia?.ToString()) && string.IsNullOrEmpty(sangKien.NgayTraKetQuaPhucKhao?.ToString()) && (sangKien.TrangThaiSK == "DA_CONG_NHAN" || sangKien.TrangThaiSK == "KHONG_CONG_NHAN")) {
+                                    <p>
+                                        vào ngày: @sangKien.NgayTraKetQuaDanhGia?.ToString("dd/MM/yyyy")
+                                    </p>
+                                } else if(!string.IsNullOrEmpty(sangKien.NgayTraKetQuaDanhGia?.ToString()) && !string.IsNullOrEmpty(sangKien.NgayTraKetQuaPhucKhao?.ToString()) && (sangKien.TrangThaiSK == "DA_CONG_NHAN" || sangKien.TrangThaiSK == "KHONG_CONG_NHAN")) {
+                                    <p>
+                                        vào ngày: @sangKien.NgayTraKetQuaPhucKhao?.ToString("dd/MM/yyyy")
+                                    </p>
                                 }
+                                
                             </td>
                             <td class="p-2">
                                 <div class="flex items-center gap-2">
@@ -106,6 +125,11 @@
 
                         sttsk++;
                     }
+                    <tr id="khongCoKetQua" style="display:none;">
+                        <td colspan="8" class="p-2 text-center">
+                            Không tìm thấy sáng kiến phù hợp
+                        </td>
+                    </tr>
                 } else {
                     <tr>
                         <td colspan="8" class="p-2 text-center">Danh sách rỗng</td>
@@ -114,6 +138,32 @@
             </tbody>
         </table>
     </div>
+
+    @if (tongSoTrang > 1)
+    {
+        <div class="flex justify-center mt-3">
+            <div class="join">
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai - 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == 1 ? "btn-disabled" : "")">
+                    &#10094;
+                </a>
+                @for (int i = 1; i <= tongSoTrang; i++)
+                {
+                    <a asp-action="Index" 
+                       asp-route-trang="@i" 
+                       class="join-item btn btn-sm @(trangHienTai == i ? "btn-active btn-primary text-base-100" : "")">
+                        @i
+                    </a>
+                }
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai + 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == tongSoTrang ? "btn-disabled" : "")">
+                    &#10095;
+                </a>
+            </div>
+        </div>
+    }
 </div>
 
 @if (TempData["Success"] != null)
@@ -135,9 +185,46 @@
 }
 
 <script>
-    setTimeout(() => {
-        document.getElementById('toast')?.remove();
-    }, 3000);
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+            document.getElementById('toast')?.remove();
+        }, 3000);
+
+        //
+        const inputTKSK = document.getElementById("timKiemSangKien");
+
+        const timKiemSangKien = () => {
+            const rows = document.querySelectorAll("#bodyBangSangKien tr:not(#khongCoKetQua)");
+            const emptyRow = document.getElementById("khongCoKetQua");
+
+            inputTKSK.addEventListener("input", function () {
+                const keyword = this.value.trim().toLowerCase();
+                let count = 0;
+
+                rows.forEach(row => {
+                    const ten = row.cells[1].textContent.toLowerCase();
+
+                    if (ten.includes(keyword)) {
+                        row.style.display = "";
+                        count++;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                emptyRow.style.display = count === 0 ? "" : "none";
+            });
+        }
+
+        timKiemSangKien();
+
+        const xoaTimKiemSangKien = document.getElementById("xoaTimKiemSangKien");
+        
+        xoaTimKiemSangKien.addEventListener("click", () => {
+            inputTKSK.value = "";
+            inputTKSK.dispatchEvent(new Event("input"));
+        });
+    });
 </script>
 
 

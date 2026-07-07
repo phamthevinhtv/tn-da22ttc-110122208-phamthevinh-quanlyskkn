@@ -20,10 +20,20 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "BGD")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = await _appDbContext.DbSetLinhVuc.CountAsync();
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+
             var data = await _appDbContext.DbSetLinhVuc
                 .OrderBy(x => x.TenLV)
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
                 .Select(x => new LinhVucVM
                 {
                     MaLV = x.MaLV,
@@ -33,6 +43,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                         .Any(y => y.MaLV == x.MaLV)
                 })
                 .ToListAsync();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
 
             return View(data);
         }

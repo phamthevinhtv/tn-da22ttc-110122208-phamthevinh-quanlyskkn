@@ -21,10 +21,20 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "BGD")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
+            int soDongTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            int tongSoDong = await _appDbContext.DbSetHoiDong.CountAsync();
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoDong / soDongTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+            
             var data = await _appDbContext.DbSetHoiDong
                 .OrderByDescending(x => x.NgayLap)
+                .Skip((trang - 1) * soDongTrenTrang)
+                .Take(soDongTrenTrang)
                 .Select(x => new HoiDongVM
                 {
                     MaHD = x.MaHD,
@@ -37,6 +47,9 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
                                _appDbContext.DbSetDanhGia.Any(y => y.MaHD == x.MaHD)
                 })
                 .ToListAsync();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
 
             return View(data);
         }
@@ -87,6 +100,7 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
                 hoiDongVM.DSCBGVVaiTro = await _appDbContext.DbSetCBGVVaiTroHoiDong
                 .Where(x => x.MaHD == ma)
+                .OrderBy(x => x.MaVT)
                 .Select(x => new CBGVVaiTroHoiDongVM
                 {
                     MaHD = x.MaHD,

@@ -8,7 +8,7 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
     {
         public string MaCBGV { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Vui lòng nhập tên cán bộ/giảng viên")]
+        [Required(ErrorMessage = "Vui lòng nhập tên cán bộ, giảng viên")]
         public string? HoTen { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập email")]

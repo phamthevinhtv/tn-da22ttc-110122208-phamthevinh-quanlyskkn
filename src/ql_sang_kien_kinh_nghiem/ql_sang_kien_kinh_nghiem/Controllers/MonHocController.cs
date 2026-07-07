@@ -29,30 +29,61 @@ namespace ql_sang_kien_kinh_nghiem.Controllers
 
         [Authorize(Roles = "BGD")]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int trang = 1)
         {
-            var data = await _appDbContext.DbSetNganh
+            var tatCaData = await _appDbContext.DbSetNganh
                 .OrderBy(n => n.TenNganh)
                 .Select(n => new NganhVM
                 {
                     MaNganh = n.MaNganh,
                     TenNganh = n.TenNganh,
-
                     DSMonHoc = n.DSMonHoc
                         .OrderBy(m => m.TenMH)
                         .Select(m => new MonHocVM
                         {
                             MaMH = m.MaMH,
                             TenMH = m.TenMH,
-
                             DaSuDung = _appDbContext.DbSetMonHocSangKien
                                 .Any(mhsk => mhsk.MaMH == m.MaMH)
                         })
                         .ToList()
                 })
                 .ToListAsync();
-                
-            return View(data);
+
+            int soMonTrenTrang = 15;
+            if (trang < 1) trang = 1;
+
+            var tatCaMonPhang = tatCaData
+                .SelectMany(n => (n.DSMonHoc ?? new List<MonHocVM>()).Select(m => new { Nganh = n, Mon = m }))
+                .ToList();
+
+            int tongSoMonHoc = tatCaMonPhang.Count;
+            int tongSoTrang = (int)Math.Ceiling((double)tongSoMonHoc / soMonTrenTrang);
+
+            if (trang > tongSoTrang && tongSoTrang > 0) trang = tongSoTrang;
+
+            int boQua = (trang - 1) * soMonTrenTrang;
+            var monHocTheoTrang = tatCaMonPhang
+                .Skip(boQua)
+                .Take(soMonTrenTrang)
+                .ToList();
+
+            var dataPhanTrang = monHocTheoTrang
+                .GroupBy(x => new { x.Nganh.MaNganh, x.Nganh.TenNganh })
+                .OrderBy(g => g.Key.TenNganh)
+                .Select(g => new NganhVM
+                {
+                    MaNganh = g.Key.MaNganh,
+                    TenNganh = g.Key.TenNganh,
+                    DSMonHoc = g.Select(x => x.Mon).ToList()
+                })
+                .ToList();
+
+            ViewBag.TrangHienTai = trang;
+            ViewBag.TongSoTrang = tongSoTrang;
+            ViewBag.SttBatDau = boQua + 1; 
+
+            return View(dataPhanTrang);
         }
 
         [HttpGet]

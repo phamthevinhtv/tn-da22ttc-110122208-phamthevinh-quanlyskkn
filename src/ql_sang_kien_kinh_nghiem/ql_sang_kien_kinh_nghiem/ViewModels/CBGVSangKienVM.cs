@@ -4,7 +4,7 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
 {
     public class CBGVSangKienVM
     {
-        [Required(ErrorMessage = "Vui lòng chọn cán bộ/giảng viên")]
+        [Required(ErrorMessage = "Vui lòng chọn cán bộ, giảng viên")]
         public string? MaCBGV { get; set; }
 
         [Required]

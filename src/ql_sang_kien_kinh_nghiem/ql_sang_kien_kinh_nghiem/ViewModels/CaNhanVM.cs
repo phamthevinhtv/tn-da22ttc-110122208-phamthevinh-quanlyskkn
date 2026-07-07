@@ -8,6 +8,11 @@ namespace ql_sang_kien_kinh_nghiem.ViewModels
     {
         public string Ten { get; set; } = string.Empty;
 
+        public string TenCVDV { get; set; } = string.Empty;
+        
+        public string TenTDN { get; set; } = string.Empty;
+
+
         [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập")]
         [RegularExpression(@"^[a-z0-9!@#$%^&*()_+=\[{\]};:<>|./?,-]{6,}$", 
         ErrorMessage = "Tên đăng nhập phải có ít nhất 6 ký tự, gồm chữ thường, số và ký tự đặc biệt")]

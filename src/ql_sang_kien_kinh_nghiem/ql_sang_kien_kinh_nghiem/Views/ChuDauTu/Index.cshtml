@@ -2,13 +2,25 @@
 
 @{
     ViewData["Title"] = "Quản lý chủ đầu tư sáng kiến";
-    int sttcdt = 1;
+    
+    int trangHienTai = ViewBag.TrangHienTai ?? 1;
+    int tongSoTrang = ViewBag.TongSoTrang ?? 1;
+    int soDongTrenTrang = 15;
+    int sttcdt = (trangHienTai - 1) * soDongTrenTrang + 1;
 }
 
 <div class="p-3">
     <div class="flex justify-between items-center mb-3 flex-wrap gap-3">
         <h2 class="text-lg font-medium">Danh sách chủ đầu tư sáng kiến</h2>
-        <a asp-action="ChiTiet" asp-controller="ChuDauTu" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm chủ đầu tư</a>
+        <div class="flex gap-3 items-center grow justify-end">
+            <label class="input h-8 text-xs w-full md:max-w-70 pr-[8px]">
+                <input type="text" id="timKiemCDT" class="grow" placeholder="Tìm theo tên, email, sđt, địa chỉ chủ đầu tư">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#B7B7B7" class="cursor-pointer" id="xoaTimKiemCDT">
+                    <path d="M257.85-231.38 232-257.85 453.54-480 232-702.15l25.85-26.47L480-506.46l222.15-222.16L728-702.15 506.46-480 728-257.85l-25.85 26.47L480-453.54 257.85-231.38Z"/>
+                </svg>
+            </label>
+            <a asp-action="ChiTiet" asp-controller="ChuDauTu" class="btn btn-outline btn-primary btn-sm hover:text-base-100 font-normal shadow-none">Thêm chủ đầu tư</a>
+        </div>
     </div>
 
     <div class="overflow-x-auto rounded-box border border-base-300">
@@ -23,7 +35,7 @@
                     <th class="p-2 text-base-content w-20">Hành động</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyBangCDT">
                 @if(Model != null && Model.Count > 0) {
                     @foreach (var chuDauTu in Model)
                     {
@@ -80,6 +92,11 @@
                         </tr>
                         sttcdt++;
                     }
+                    <tr id="khongCoKetQua" style="display:none;">
+                        <td colspan="6" class="p-2 text-center">
+                            Không tìm thấy chủ đầu tư phù hợp
+                        </td>
+                    </tr>
                 } else {
                     <tr>
                         <td colspan="6" class="p-2 text-center">Danh sách rỗng</td>
@@ -88,6 +105,32 @@
             </tbody>
         </table>
     </div>
+
+    @if (tongSoTrang > 1)
+    {
+        <div class="flex justify-center mt-3">
+            <div class="join">
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai - 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == 1 ? "btn-disabled" : "")">
+                    &#10094;
+                </a>
+                @for (int i = 1; i <= tongSoTrang; i++)
+                {
+                    <a asp-action="Index" 
+                       asp-route-trang="@i" 
+                       class="join-item btn btn-sm @(trangHienTai == i ? "btn-active btn-primary text-base-100" : "")">
+                        @i
+                    </a>
+                }
+                <a asp-action="Index" 
+                   asp-route-trang="@(trangHienTai + 1)" 
+                   class="join-item btn btn-sm @(trangHienTai == tongSoTrang ? "btn-disabled" : "")">
+                    &#10095;
+                </a>
+            </div>
+        </div>
+    }
 </div>
 
 @if (TempData["Success"] != null)
@@ -109,7 +152,47 @@
 }
 
 <script>
-    setTimeout(() => {
-        document.getElementById('toast')?.remove();
-    }, 3000);
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(() => {
+            document.getElementById('toast')?.remove();
+        }, 3000);
+
+        //
+        const inputTKCDT = document.getElementById("timKiemCDT");
+
+        const timKiemCDT = () => {
+            const rows = document.querySelectorAll("#bodyBangCDT tr:not(#khongCoKetQua)");
+            const emptyRow = document.getElementById("khongCoKetQua");
+
+            inputTKCDT.addEventListener("input", function () {
+                const keyword = this.value.trim().toLowerCase();
+                let count = 0;
+
+                rows.forEach(row => {
+                    const ten = row.cells[1].textContent.toLowerCase();
+                    const email = row.cells[2].textContent.toLowerCase();
+                    const sdt = row.cells[3].textContent.toLowerCase();
+                    const diaChi = row.cells[4].textContent.toLowerCase();
+
+                    if (ten.includes(keyword) || email.includes(keyword) || sdt.includes(keyword) || diaChi.includes(keyword)) {
+                        row.style.display = "";
+                        count++;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                emptyRow.style.display = count === 0 ? "" : "none";
+            });
+        }
+
+        timKiemCDT();
+
+        const xoaTimKiemCDT = document.getElementById("xoaTimKiemCDT");
+        
+        xoaTimKiemCDT.addEventListener("click", () => {
+            inputTKCDT.value = "";
+            inputTKCDT.dispatchEvent(new Event("input"));
+        });
+    });
 </script>
